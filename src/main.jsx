@@ -1,9 +1,9 @@
-import { lazy, StrictMode, useState } from "react";
+import { lazy, StrictMode, useState, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.jsx";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { BrowserRouter } from "react-router";
 import Navbar from "./components/Navbar.jsx";
+import DiscoveryGrid from "./components/DiscoveryGrid.jsx";
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const LoginPage = lazy(() => import("./pages/Login.jsx"));
@@ -14,12 +14,19 @@ function LayoutWithModals() {
   const [showRegister, setShowRegister] = useState(false);
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Navbar
         onLoginClick={() => setShowLogin(true)}
         onRegisterClick={() => setShowRegister(true)}
       />
-      <HomePage />
+      <main>
+        <DiscoveryGrid />
+        <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
+          <HomePage />
+        </Suspense>
+      </main>
+
+      {/* Modals */}
       {showLogin && (
         <LoginPage
           onClose={() => setShowLogin(false)}
@@ -38,7 +45,7 @@ function LayoutWithModals() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 
