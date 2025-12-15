@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/images/RAMI_logo.png";
+import { Eye, EyeOff } from "lucide-react"; // Import icons
 
 export default function Login({ onClose, onSwitchToRegister }) {
   const [email, setEmail] = useState("");
@@ -8,36 +9,14 @@ export default function Login({ onClose, onSwitchToRegister }) {
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isFormValid =
     email.trim() !== "" && email.includes("@") && password !== "";
   const API_URL = import.meta.env.VITE_BACKEND_URL;
-
-  const handleGoogleAuth = () => {
-    const width = 500,
-      height = 600;
-    const left = window.screenX + (window.innerWidth - width) / 2;
-    const top = window.screenY + (window.innerHeight - height) / 2;
-
-    const popup = window.open(
-      `${API_URL}/auth/google`,
-      "google_login",
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-
-    window.addEventListener(
-      "message",
-      (event) => {
-        if (event.origin !== API_URL) return;
-        if (event.data === "success") {
-          popup.close();
-          window.location.reload();
-        }
-      },
-      { once: true }
-    );
-  };
 
   const LoginFunc = () => {
     axios
@@ -46,24 +25,26 @@ export default function Login({ onClose, onSwitchToRegister }) {
   };
 
   return (
-    <div
-      className={`fixed inset-0 z-100 flex items-center  justify-center p-4 transition-opacity duration-300 ${
-        mounted ? "opacity-100" : "opacity-0"
-      }`}>
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 overflow-hidden">
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ease-in-out ${
+          mounted ? "opacity-100" : "opacity-0"
+        }`}
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-[440px] bg-white rounded-[40px] p-8 shadow-2xl">
+      <div
+        className={`relative w-full max-w-[440px] bg-white rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${
+          mounted
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 translate-y-8 scale-95"
+        }`}>
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="RAMI logo" className="h-16 mb-2" />
           <h2 className="text-2xl font-black text-gray-900">Üdvözlünk újra!</h2>
         </div>
 
-        <button
-          onClick={handleGoogleAuth}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 active:scale-95">
+        <button className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 active:scale-95">
           <img
             src="https://www.svgrepo.com/show/355037/google.svg"
             className="h-5 w-5"
@@ -72,19 +53,10 @@ export default function Login({ onClose, onSwitchToRegister }) {
           Bejelentkezés Google-lel
         </button>
 
-        <div className="relative flex items-center mb-6">
-          <div className="grow border-t border-gray-100"></div>
-          <span className="mx-4 text-xs font-bold text-gray-300 uppercase">
-            vagy
-          </span>
-          <div className="grow border-t border-gray-100"></div>
-        </div>
-
         <div className="space-y-5">
-          {/* Email Mező */}
           <div className="flex flex-col group">
-            <label className="text-xs font-bold text-gray-400 uppercase mb-2 ml-1 transition-all duration-300 group-focus-within:text-black group-focus-within:translate-x-1">
-              E-mail cím
+            <label className="text-xs font-bold text-gray-400 uppercase mb-2 ml-1 transition-all group-focus-within:text-black">
+              E-mail
             </label>
             <input
               type="email"
@@ -94,9 +66,8 @@ export default function Login({ onClose, onSwitchToRegister }) {
             />
           </div>
 
-          {/* Jelszó Mező */}
           <div className="flex flex-col group">
-            <label className="text-xs font-bold text-gray-400 uppercase mb-2 ml-1 transition-all duration-300 group-focus-within:text-black group-focus-within:translate-x-1">
+            <label className="text-xs font-bold text-gray-400 uppercase mb-2 ml-1 transition-all group-focus-within:text-black">
               Jelszó
             </label>
             <div className="relative">
@@ -107,9 +78,10 @@ export default function Login({ onClose, onSwitchToRegister }) {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 hover:text-yellow-600 transition-colors">
-                {showPassword ? "ELREJT" : "MUTAT"}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-600 transition-colors">
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>

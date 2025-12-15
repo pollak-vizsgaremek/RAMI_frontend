@@ -11,7 +11,7 @@ const Navbar = ({ onLoginClick, onRegisterClick }) => {
   };
 
   return (
-    <nav className="bg-gray-800 p-2 sticky top-0 z-50 shadow-md">
+    <nav className="bg-[#3A4750] p-2 sticky top-0 z-50 shadow-md">
       <div className="container mx-auto flex items-center px-4">
         <div
           className="flex items-center gap-3 cursor-pointer group transition-transform duration-300 hover:scale-[1.02]"

@@ -14,7 +14,7 @@ function LayoutWithModals() {
   const [showRegister, setShowRegister] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-800 bg-linear-to-br from-gray-900 via-gray-500 to-gray-300">
       <Navbar
         onLoginClick={() => setShowLogin(true)}
         onRegisterClick={() => setShowRegister(true)}
