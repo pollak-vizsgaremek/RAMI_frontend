@@ -47,7 +47,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
 
   return (
     <div
-      className={`fixed inset-0 z-100 flex items-center justify-center p-4 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-100 flex items-center  justify-center p-4 transition-opacity duration-300 ${
         mounted ? "opacity-100" : "opacity-0"
       }`}>
       <div
@@ -55,7 +55,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-[440px] bg-white rounded-32px p-8 shadow-2xl">
+      <div className="relative w-full max-w-[440px] bg-white rounded-[40px] p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="RAMI logo" className="h-16 mb-2" />
           <h2 className="text-2xl font-black text-gray-900">Üdvözlünk újra!</h2>
