@@ -8,26 +8,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const instructorsPool = [
-  {
-    name: "Kovács János",
-    area: "Észak-Budapest",
-    desc: "Manuális váltós és intenzív tanfolyamok szakértője.",
-    color: "from-[#F6C90E] to-[#E2B80D] text-black",
-  },
-  {
-    name: "Nagy Emese",
-    area: "Debrecen",
-    desc: "Izgulós tanulókra és automata autókra specializálódott.",
-    color: "from-[#3A4750] to-[#2A343A] text-white border border-white/10",
-  },
-  {
-    name: "Tóth Bence",
-    area: "Szeged",
-    desc: "A legmagasabb elsőre sikeres vizsgázási arány a régióban.",
-    color: "from-black to-[#303841] text-white border border-white/5",
-  },
-];
+// The mock instructorsPool has been removed and replaced by API fetching logic below.
 
 const reviewsPool = [
   { user: "G. Liam", text: "Elsőre átmentem! A türelme páratlan." },
@@ -36,23 +17,73 @@ const reviewsPool = [
 ];
 
 export default function DiscoveryGrid() {
+  const [instructors, setInstructors] = useState([]); // State for fetched data
+  const [loading, setLoading] = useState(true); // State for loading status
   const [index, setIndex] = useState(0);
   const [onlineCount, setOnlineCount] = useState(142);
   const [isVisible, setIsVisible] = useState(true);
 
+  // --- NEW: Data Fetching Effect ---
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsVisible(false);
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % instructorsPool.length);
-        setOnlineCount((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
-        setIsVisible(true);
-      }, 400);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
+    const fetchInstructors = async () => {
+      try {
+        // Ensure this URL matches your server.ts setup
+        const response = await fetch("http://localhost:3001/api/instructors");
+        if (!response.ok) {
+          throw new Error("Failed to fetch instructors");
+        }
+        const data = await response.json();
+        setInstructors(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+        // Optional: Keep mock data on failure for a fallback
+        // setInstructors(fallbackInstructorsPool);
+      }
+    };
 
-  const instr = instructorsPool[index];
+    fetchInstructors();
+  }, []); // Run only once on component mount
+
+  // --- Updated: Rotation Effect ---
+  useEffect(() => {
+    // Only start the interval if we have instructors
+    if (instructors.length > 0) {
+      const interval = setInterval(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          // Use the fetched instructors array length
+          setIndex((prev) => (prev + 1) % instructors.length);
+          setOnlineCount((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
+          setIsVisible(true);
+        }, 400);
+      }, 8000);
+      return () => clearInterval(interval);
+    }
+  }, [instructors]); // Rerun when instructors array is populated
+
+  // Guard Clause: Display loading or a placeholder if data is not ready
+  if (loading) {
+    return (
+      <section className="max-w-7xl mx-auto px-6 w-full py-10">
+        <p className="text-white text-center">Oktatók betöltése...</p>
+      </section>
+    );
+  }
+
+  // Handle case where no instructors are fetched (e.g., empty database)
+  if (instructors.length === 0) {
+    return (
+      <section className="max-w-7xl mx-auto px-6 w-full py-10">
+        <p className="text-red-400 text-center">
+          Nem található oktató. Kérjük, ellenőrizze a MongoDB gyűjteményt.
+        </p>
+      </section>
+    );
+  }
+
+  const instr = instructors[index]; 
 
   return (
     <section className="max-w-7xl mx-auto px-6 w-full py-10">
@@ -60,7 +91,7 @@ export default function DiscoveryGrid() {
         {/* Hero Widget */}
         <div
           className={`md:col-span-2 md:row-span-2 rounded-4xl p-8 flex flex-col justify-between transition-all duration-500 bg-linear-to-br ${
-            instr.color
+            instr.color // 
           } shadow-2xl ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}>
