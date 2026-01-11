@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/images/RAMI_logo.png";
 import { Eye, EyeOff } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { handleGoogleAuth } from "../utils/mockAuth";
+import googleIcon from "../assets/images/google.svg";
 
 export default function Register({ onClose, onSwitchToLogin }) {
   const [surname, setSurname] = useState("");
@@ -16,6 +19,26 @@ export default function Register({ onClose, onSwitchToLogin }) {
     const timer = setTimeout(() => setMounted(true), 10);
     return () => clearTimeout(timer);
   }, []);
+
+  const googleRegister = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const userInfo = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+        );
+
+        const result = handleGoogleAuth(userInfo.data);
+
+        console.log("Registered/Logged in:", result.user);
+        alert(`Sikeres regisztráció/bejelentkezés! Üdv, ${result.user.name}`);
+        localStorage.setItem("currentUser", JSON.stringify(result.user));
+        onClose();
+      } catch (error) {
+        console.error("Google Register Error:", error);
+      }
+    },
+  });
 
   const isFormValid =
     surname.trim() !== "" &&
@@ -49,10 +72,20 @@ export default function Register({ onClose, onSwitchToLogin }) {
         }`}>
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="RAMI logo" className="h-14 mb-2" />
-          <h2 className="text-2xl font-black text-gray-900">
-            Fiók létrehozása
-          </h2>
+          <h2 className="text-2xl font-black text-gray-900">Regisztráció</h2>
         </div>
+
+        <button
+          onClick={() => googleRegister()}
+          className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 active:scale-95 cursor-pointer">
+          <img
+            src={googleIcon}
+            className="h-5 w-5"
+            alt="Google"
+            crossOrigin="anonymous"
+          />
+          Fiók létrehozása Google fiókkal
+        </button>
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

@@ -4,6 +4,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router";
 import Navbar from "./components/Navbar.jsx";
 import DiscoveryGrid from "./components/DiscoveryGrid.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google"; // Added import
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const LoginPage = lazy(() => import("./pages/Login.jsx"));
@@ -53,8 +54,10 @@ export default LayoutWithModals;
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <LayoutWithModals />
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <BrowserRouter>
+        <LayoutWithModals />
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   </StrictMode>
 );

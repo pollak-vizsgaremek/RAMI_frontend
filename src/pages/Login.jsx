@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/images/RAMI_logo.png";
-import { Eye, EyeOff } from "lucide-react"; // Import icons
+import { Eye, EyeOff } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { handleGoogleAuth } from "../utils/mockAuth";
+import googleIcon from "../assets/images/google.svg";
 
 export default function Login({ onClose, onSwitchToRegister }) {
   const [email, setEmail] = useState("");
@@ -13,6 +16,28 @@ export default function Login({ onClose, onSwitchToRegister }) {
     const timer = setTimeout(() => setMounted(true), 10);
     return () => clearTimeout(timer);
   }, []);
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const userInfo = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+        );
+
+        // Save to Mock DB
+        const result = handleGoogleAuth(userInfo.data);
+
+        // Handle Success
+        console.log("Logged in:", result.user);
+        alert(`Sikeres bejelentkezés! Üdv, ${result.user.name}`);
+        localStorage.setItem("currentUser", JSON.stringify(result.user));
+        onClose();
+      } catch (error) {
+        console.error("Google Login Error:", error);
+      }
+    },
+  });
 
   const isFormValid =
     email.trim() !== "" && email.includes("@") && password !== "";
@@ -44,13 +69,16 @@ export default function Login({ onClose, onSwitchToRegister }) {
           <h2 className="text-2xl font-black text-gray-900">Üdvözlünk újra!</h2>
         </div>
 
-        <button className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 active:scale-95">
+        <button
+          onClick={() => googleLogin()}
+          className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 active:scale-95 cursor-pointer">
           <img
-            src="https://www.svgrepo.com/show/355037/google.svg"
+            src={googleIcon}
             className="h-5 w-5"
             alt="Google"
+            crossOrigin="anonymous"
           />
-          Bejelentkezés Google-lel
+          Bejelentkezés Google fiókkal
         </button>
 
         <div className="space-y-5">
