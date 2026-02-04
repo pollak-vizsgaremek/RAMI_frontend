@@ -4,24 +4,23 @@ import ReviewWidget from "./widgets/ReviewWidget";
 import OnlineStatusWidget from "./widgets/OnlineStatusWidget";
 import StatisticsWidget from "./widgets/StatisticsWidget";
 import PopularCitiesWidget from "./widgets/PopularCitiesWidget";
-import SearchCTAWidget from "./widgets/SearchCTAWidget";
 import RatingWidget from "./widgets/RatingWidget";
+import QuickActionsWidget from "./widgets/QuickActionsWidget";
+import WeatherWidget from "./widgets/WeatherWidget";
+import TopInstructor from "./widgets/topInstructor";
 import { EXAM_CENTERS } from "./widgets/constants";
 
 export default function DiscoveryGrid() {
   const [index, setIndex] = useState(0);
   const [onlineCount, setOnlineCount] = useState(142);
-  const [isVisible, setIsVisible] = useState(true);
   const [nearestCenter, setNearestCenter] = useState(null);
   const [locLoading, setLocLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsVisible(false);
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % 3);
         setOnlineCount((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
-        setIsVisible(true);
       }, 400);
     }, 8000);
     return () => clearInterval(interval);
@@ -60,7 +59,7 @@ export default function DiscoveryGrid() {
             latitude,
             longitude,
             center.lat,
-            center.lng
+            center.lng,
           );
           if (dist < minDistance) {
             minDistance = dist;
@@ -74,13 +73,22 @@ export default function DiscoveryGrid() {
       () => {
         alert("Engedélyezned kell a hozzáférést a helyzetedhez a kereséshez!");
         setLocLoading(false);
-      }
+      },
     );
+  };
+
+  // Sample data for Top Instructor
+  const topInstr = {
+    name: "Kovács Péter",
+    desc: "A hónap kiemelt oktatója kiváló értékelésekkel.",
+    color: "from-blue-500 to-purple-600",
   };
 
   return (
     <section className="max-w-7xl mx-auto px-6 w-full py-10">
       <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
+        {/* Row 1 */}
+        <TopInstructor instr={topInstr} isVisible={true} />
         <LocationFinderWidget
           nearestCenter={nearestCenter}
           locLoading={locLoading}
@@ -88,10 +96,18 @@ export default function DiscoveryGrid() {
         />
         <ReviewWidget index={index} />
         <OnlineStatusWidget onlineCount={onlineCount} />
+        <WeatherWidget />
+
+        {/* Row 2 */}
         <StatisticsWidget />
         <PopularCitiesWidget />
-        <SearchCTAWidget />
         <RatingWidget />
+
+        {/* Row 3 - Large Items */}
+        <div className="md:col-span-2 md:row-span-2"></div>
+
+        {/* Row 4 - Wide items */}
+        <QuickActionsWidget />
       </div>
     </section>
   );

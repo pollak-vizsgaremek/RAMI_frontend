@@ -1,63 +1,26 @@
-import { lazy, StrictMode, useState, Suspense } from "react";
+import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter } from "react-router";
-import Navbar from "./components/Navbar.jsx";
-import DiscoveryGrid from "./components/DiscoveryGrid.jsx";
-import { GoogleOAuthProvider } from "@react-oauth/google"; // Added import
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
-const LoginPage = lazy(() => import("./pages/Login.jsx"));
-const RegisterPage = lazy(() => import("./pages/Register.jsx"));
 
-function LayoutWithModals() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-
+function App() {
   return (
     <div className="min-h-screen bg-gray-800 bg-linear-to-br from-gray-900 via-gray-500 to-gray-300">
-      <Navbar
-        onLoginClick={() => setShowLogin(true)}
-        onRegisterClick={() => setShowRegister(true)}
-      />
-      <main>
-        <DiscoveryGrid />
-        <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
-          <HomePage />
-        </Suspense>
-      </main>
-
-      {/* Modals */}
-      {showLogin && (
-        <LoginPage
-          onClose={() => setShowLogin(false)}
-          onSwitchToRegister={() => {
-            setShowLogin(false);
-            setShowRegister(true);
-          }}
-        />
-      )}
-      {showRegister && (
-        <RegisterPage
-          onClose={() => setShowRegister(false)}
-          onSwitchToLogin={() => {
-            setShowRegister(false);
-            setShowLogin(true);
-          }}
-        />
-      )}
+      <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
+        <HomePage />
+      </Suspense>
     </div>
   );
 }
 
-export default LayoutWithModals;
+export default App;
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <BrowserRouter>
-        <LayoutWithModals />
-      </BrowserRouter>
-    </GoogleOAuthProvider>
-  </StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
 );
