@@ -1,5 +1,5 @@
 import React from "react";
-import { BookOpen, User, Phone, Download } from "lucide-react";
+import { BookOpen, User, Phone, Download, Newspaper } from "lucide-react";
 
 const actions = [
   {
@@ -19,6 +19,12 @@ const actions = [
     label: "Profil",
     color: "text-purple-400",
     bg: "bg-white/5 hover:bg-purple-400 hover:text-black",
+  },
+  {
+    icon: Newspaper,
+    label: "Hírek",
+    color: "text-red-400",
+    bg: "bg-white/5 hover:bg-red-400 hover:text-black",
   },
   {
     icon: Phone,
@@ -42,7 +48,7 @@ export default function QuickActionsWidget() {
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
         {actions.map((action, idx) => (
           <button
             key={idx}
