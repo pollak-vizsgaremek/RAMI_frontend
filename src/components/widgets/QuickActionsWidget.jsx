@@ -30,7 +30,9 @@ const actions = [
 
 export default function QuickActionsWidget() {
   return (
-    <div className="md:col-span-2 bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-6 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group">
+    // Updated container classes for Fixed Bottom Center positioning
+    <div className="fixed bottom-0 left-2 -translate-x-1/2 z-50 w-[200%] max-w-6xl bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-8 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group">
+      {/* Background Glow Effect */}
       <div className="absolute -left-10 bottom-0 w-32 h-32 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-10 transition-opacity duration-500" />
 
       <div className="flex justify-between items-center mb-4 relative z-10">
