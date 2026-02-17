@@ -120,7 +120,7 @@ export default function Register({ onClose, onSwitchToLogin }) {
               </button>
             </div>
           </div>
-
+          {/* Remélem jó lesz */}
           <button
             onClick={RegisterFunc}
             disabled={!isFormValid}
