@@ -1,26 +1,21 @@
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { BrowserRouter } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
+import Layout from "./components/Layout.jsx";
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
-
-function App() {
-  return (
-    <div className="min-h-screen bg-gray-800 bg-linear-to-br from-gray-900 via-gray-500 to-gray-300">
-      <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
-        <HomePage />
-      </Suspense>
-    </div>
-  );
-}
-
-export default App;
+const InstructorProfile = lazy(() => import("./pages/InstructorProfile.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/instructor-profile" element={<InstructorProfile />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   </StrictMode>,
 );
