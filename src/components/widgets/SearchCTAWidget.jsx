@@ -3,7 +3,7 @@ import { Search, ChevronRight } from "lucide-react";
 
 export default function SearchCTAWidget() {
   return (
-    <div className="md:col-span-2 rounded-4xl border-2 border-dashed border-white/10 hover:border-[#F6C90E]/50 hover:bg-white/5 transition-all group cursor-pointer flex items-center justify-between px-8 bg-[#3A4750]/30">
+    <div className="md:col-span-2 rounded-4xl border-2 border-dashed border-white/10 hover:border-[#F6C90E]/50 hover:bg-white/5 transition-all group cursor-pointer flex items-center justify-between px-8 bg-[#3A4750]/30 hover:scale-[1.02] duration-300">
       <div className="flex items-center gap-4">
         <div className="p-4 bg-[#F6C90E] rounded-2xl text-black group-hover:rotate-12 transition-transform">
           <Search size={24} />

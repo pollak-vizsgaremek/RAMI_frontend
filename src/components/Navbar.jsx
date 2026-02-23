@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/images/RAMI_logo.png";
 import { Search } from "lucide-react"; // Import Search icon
 
@@ -22,9 +23,9 @@ const Navbar = ({
       {/* Updated to w-full and uses flex justify-between for far sides */}
       <div className="w-full max-w-7xl mx-auto flex items-center px-4 justify-between">
         {/* Logo and Brand Name (Left Side) */}
-        <div
-          className="flex items-center gap-3 cursor-pointer group transition-transform duration-300 hover:scale-[1.02]"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <Link
+          to="/"
+          className="flex items-center gap-3 cursor-pointer group transition-transform duration-300 hover:scale-[1.02]">
           <img
             src={logo}
             alt="RAMI logo"
@@ -33,7 +34,7 @@ const Navbar = ({
           <span className="font-brand text-white text-xl md:text-2xl font-extrabold tracking-tight">
             Rate My <span className="text-yellow-400">Instructor</span>
           </span>
-        </div>
+        </Link>
 
         {/* --- Instructor Search Bar (Center) --- */}
         <div className="grow max-w-xl mx-8 hidden md:block">

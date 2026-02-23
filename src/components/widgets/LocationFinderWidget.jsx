@@ -7,22 +7,9 @@ export default function LocationFinderWidget({
   locLoading,
   onFindNearest,
 }) {
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
 
   return (
-    <div className="bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-6 flex flex-col justify-between border border-white/10 shadow-2xl group relative overflow-hidden">
+    <div className="bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-6 flex flex-col justify-between border border-white/10 shadow-2xl group relative overflow-hidden hover:scale-[1.02] duration-300">
       <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-15 transition-opacity duration-500" />
 
       <div className="flex justify-between items-start relative z-10">
@@ -32,10 +19,7 @@ export default function LocationFinderWidget({
               ? "bg-[#F6C90E] text-black rotate-12"
               : "bg-white/5 text-[#F6C90E]"
           }`}>
-          <Navigation
-            size={18}
-            className={locLoading ? "animate-pulse" : ""}
-          />
+          <Navigation size={18} className={locLoading ? "animate-pulse" : ""} />
         </div>
         <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-black/20 px-2 py-1 rounded-md">
           Live Locator
@@ -52,7 +36,7 @@ export default function LocationFinderWidget({
               </p>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[#F6C90E] text-lg font-black">
+              <span className="text-[#F6C90E] text-m font-black">
                 {nearestCenter.distance}
               </span>
               <span className="text-[#F6C90E] text-[10px] font-bold uppercase ml-1">
@@ -97,8 +81,8 @@ export default function LocationFinderWidget({
           {locLoading
             ? "Pozíció lekérése..."
             : nearestCenter
-            ? "Új mérés"
-            : "Központ keresése"}
+              ? "Új mérés"
+              : "Központ keresése"}
         </button>
       </div>
     </div>

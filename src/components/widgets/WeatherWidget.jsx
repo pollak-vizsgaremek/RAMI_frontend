@@ -164,7 +164,7 @@ export default function WeatherWidget() {
 
       {/* Hourly Forecast */}
       {forecast && forecast.list && (
-        <div className="z-10 mt-6 pt-4 border-t border-white/10">
+        <div className="z-10 mt-3 pt-4 border-t border-white/10">
           <p className="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wide">
             24 órás előrejelzés
           </p>

@@ -3,7 +3,7 @@ import { MapPin } from "lucide-react";
 
 export default function PopularCitiesWidget() {
   return (
-    <div className="bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-center border border-white/5">
+    <div className="bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-center border border-white/5 hover:scale-[1.02] duration-300">
       <h5 className="font-bold text-[11px] text-gray-400 uppercase mb-3 flex items-center gap-2">
         <MapPin size={12} className="text-[#F6C90E]" /> Népszerű Városok
       </h5>
