@@ -2,7 +2,7 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Layout from "./components/Layout.jsx";
+import Layout from "./layouts/Layout.jsx";
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const InstructorProfile = lazy(() => import("./pages/InstructorProfile.jsx"));

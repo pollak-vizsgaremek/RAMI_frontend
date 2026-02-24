@@ -155,7 +155,7 @@ export default function WeatherWidget() {
           <div className="flex items-center gap-1.5 bg-black/20 px-2.5 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
             <EyeIcon size={12} className="text-red-400" />
             <span id="visibility" className="text-[10px] font-bold">
-              {weather ? (weather.visibility / 1000).toFixed(1) : 0} km
+              {weather ? (weather.visibility / 1000).toFixed(1) : "0.0"} km
             </span>
           </div>
           <div></div>
@@ -172,7 +172,7 @@ export default function WeatherWidget() {
             {forecast.list?.slice(0, 8).map((item, idx) => (
               <div
                 key={idx}
-                className="shrink-0 bg-gradient-to-r from-transparent via-white/5 to-transparent bg-black/20 border border-white/5 rounded-lg p-2 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:border-white/15 transition-colors">
+                className="shrink-0 bg-linear-to-r from-transparent via-white/5 to-transparent bg-black/20 border border-white/5 rounded-lg p-2 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:border-white/15 transition-colors">
                 <span className="text-[9px] font-bold text-gray-400 whitespace-nowrap">
                   {formatTime(item.dt)}
                 </span>

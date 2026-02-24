@@ -7,7 +7,7 @@ const actions = [
     label: "Vizsga",
     color: "text-[#F6C90E]",
     bg: "bg-white/5 hover:bg-[#F6C90E] hover:text-black",
-    href: "#", // Placeholders for further links
+    href: "https://vizsgakozpont.hu",
   },
   {
     icon: Download,
