@@ -34,7 +34,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
       />
 
       <div
-        className={`relative w-full max-w-[440px] bg-white rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${
+        className={`relative w-full max-w-110 bg-white rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${
           mounted
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-8 scale-95"
