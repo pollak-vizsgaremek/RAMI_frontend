@@ -41,6 +41,7 @@ const actions = [
 
 export default function QuickActionsWidget() {
   return (
+    <footer>
     <div className="fixed bottom-0 left-2 -translate-x-1/2 z-50 w-[200%] max-w-6xl bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-8 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group">
       <div className="absolute -left-10 bottom-0 w-32 h-32 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-10 transition-opacity duration-500" />
 
@@ -70,5 +71,7 @@ export default function QuickActionsWidget() {
         ))}
       </div>
     </div>
+    </footer>
+    
   );
 }
