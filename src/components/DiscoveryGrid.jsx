@@ -85,30 +85,30 @@ export default function DiscoveryGrid() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-6 w-full py-10">
-      <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
-        {/* Row 1 */}
-        <TopInstructor instr={topInstr} isVisible={true} />
-        <LocationFinderWidget
-          nearestCenter={nearestCenter}
-          locLoading={locLoading}
-          onFindNearest={findNearestCenter}
-        />
-        <ReviewWidget index={index} />
-        <OnlineStatusWidget onlineCount={onlineCount} />
-        <WeatherWidget />
+    <>
+      <section className="max-w-7xl mx-auto px-6 w-full py-10 pb-40">
+        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
+          {/* Row 1 */}
+          <TopInstructor instr={topInstr} isVisible={true} />
+          <LocationFinderWidget
+            nearestCenter={nearestCenter}
+            locLoading={locLoading}
+            onFindNearest={findNearestCenter}
+          />
+          <ReviewWidget index={index} />
+          <OnlineStatusWidget onlineCount={onlineCount} />
+          <WeatherWidget />
 
-        {/* Row 2 */}
-        <StatisticsWidget />
-        <PopularCitiesWidget />
-        <RatingWidget />
+          {/* Row 2 */}
+          <StatisticsWidget />
+          <PopularCitiesWidget />
+          <RatingWidget />
 
-        {/* Row 3 - Large Items */}
-        <div className="md:col-span-2 md:row-span-2"></div>
-
-        {/* Row 4 - Wide items */}
-        <QuickActionsWidget />
-      </div>
-    </section>
+          {/* Row 3 - Large Items */}
+          <div className="md:col-span-2 md:row-span-2"></div>
+        </div>
+      </section>
+      <QuickActionsWidget />
+    </>
   );
 }

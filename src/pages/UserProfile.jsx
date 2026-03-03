@@ -40,9 +40,7 @@ export default function UserProfile() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-white/10">
-  
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-white/10"></div>
             </div>
           </div>
 
@@ -60,7 +58,7 @@ export default function UserProfile() {
                     href="mailto:zoltan.kovacs@example.com"
                     className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md"
                   >
-                    zoltan.kovacs@example.com
+                    macko.lacko@example.com
                   </a>
                 </div>
                 <div className="flex-1">
