@@ -27,6 +27,7 @@ export default function Register({ onClose, onSwitchToLogin }) {
   const API_URL = import.meta.env.DATABASE_URL;
 
   const RegisterFunc = () => {
+    console.log({ API_URL, surname, lastname, email, password });
     axios
       .post(`${API_URL}/auth/register`, { surname, lastname, email, password })
       .then((res) => console.log(res.data));
@@ -123,12 +124,8 @@ export default function Register({ onClose, onSwitchToLogin }) {
           {/* Remélem jó lesz */}
           <button
             onClick={RegisterFunc}
-            disabled={!isFormValid}
-            className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 mt-2 ${
-              isFormValid
-                ? "bg-black text-white shadow-lg"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}>
+            //disabled={!isFormValid}
+            className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 mt-2 `}>
             Regisztráció
           </button>
 
