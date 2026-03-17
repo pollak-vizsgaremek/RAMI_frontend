@@ -58,7 +58,7 @@ const Navbar = ({
         {/* Removed ml-auto to allow justify-between to push it to the right */}
         <div className="flex items-center space-x-6">
           <button
-            className="relative text-white font-medium transition-all duration-200 hover:text-gray-300 active:scale-95 group"
+            className="relative text-white font-medium transition-all duration-200 hover:text-gray-300 active:scale-95 group cursor-pointer"
             onClick={handleLoginClick}>
             Bejelentkezés
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>

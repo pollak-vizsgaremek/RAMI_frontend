@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const InstructorProfile = lazy(() => import("./pages/InstructorProfile.jsx"));
 const UserProfile = lazy(() => import("./pages/UserProfile.jsx"))
+const ReviewPage = lazy(() => import("./pages/Review.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<HomePage />} />
             <Route path="/instructor-profile" element={<InstructorProfile />} />
             <Route path="/user-profile" element={<UserProfile/>}/>
+            <Route path="/review" element={<ReviewPage/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

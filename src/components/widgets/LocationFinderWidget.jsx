@@ -73,7 +73,7 @@ export default function LocationFinderWidget({
         <button
           onClick={onFindNearest}
           disabled={locLoading}
-          className={`w-full py-3 rounded-2xl text-[11px] font-black uppercase tracking-tighter transition-all duration-300 active:scale-95 ${
+          className={`w-full py-3 rounded-2xl text-[11px] font-black uppercase tracking-tighter transition-all duration-300 active:scale-95 cursor-pointer ${
             nearestCenter
               ? "bg-white/5 text-white hover:bg-white/10"
               : "bg-[#F6C90E] text-black hover:scale-[1.02]"
