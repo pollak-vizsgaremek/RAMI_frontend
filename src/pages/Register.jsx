@@ -123,9 +123,13 @@ export default function Register({ onClose, onSwitchToLogin }) {
           </div>
           {/* Remélem jó lesz */}
           <button
-            onClick={RegisterFunc}
-            //disabled={!isFormValid}
-            className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 mt-2 `}>
+            disabled={!isFormValid}
+            onClick={RegisterFunc()}
+            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 ${
+              isFormValid
+                ? "bg-black hover:bg-gray-800 shadow-lg"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}>
             Regisztráció
           </button>
 

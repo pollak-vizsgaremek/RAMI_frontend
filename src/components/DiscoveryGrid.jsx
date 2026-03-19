@@ -7,7 +7,7 @@ import PopularCitiesWidget from "./widgets/PopularCitiesWidget";
 import RatingWidget from "./widgets/RatingWidget";
 import QuickActionsWidget from "./widgets/QuickActionsWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
-import TopInstructor from "./widgets/topInstructor";
+import TopInstructor from "./widgets/TopInstructor";
 import { EXAM_CENTERS } from "./widgets/constants";
 
 export default function DiscoveryGrid() {

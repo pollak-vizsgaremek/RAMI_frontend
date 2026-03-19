@@ -30,7 +30,7 @@ export default function UserProfile() {
             <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-start">
               <div className="mb-6">
                 <span className="bg-[#F6C90E]/20 text-[#F6C90E] border border-[#F6C90E]/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-3">
-                  Felhsználó
+                  Felhasználó
                 </span>
                 <h2 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">
                   Lackó Mackó
@@ -56,8 +56,7 @@ export default function UserProfile() {
                   </h4>
                   <a
                     href="mailto:zoltan.kovacs@example.com"
-                    className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md"
-                  >
+                    className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md">
                     macko.lacko@example.com
                   </a>
                 </div>
@@ -67,8 +66,7 @@ export default function UserProfile() {
                   </h4>
                   <a
                     href="tel:+36301234567"
-                    className="font-medium text-white hover:text-[#F6C90E] transition-colors text-lg"
-                  >
+                    className="font-medium text-white hover:text-[#F6C90E] transition-colors text-lg">
                     +36 30 123 4567
                   </a>
                 </div>

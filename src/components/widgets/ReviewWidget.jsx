@@ -3,13 +3,23 @@ import { Star } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function ReviewWidget() {
-
   let navigate = useNavigate();
 
   return (
-    <div className="bg-[#3A4750] rounded-4xl p-2 flex flex-col justify-center border border-white/5 shadow-lg hover:scale-[1.02] duration-300">
-      <Star className="text-[#F6C90E] mb-3" size={290} />
-      <button onClick={() => navigate("/review")} className="w-1/2 py-3 rounded-2xl text-[11px] font-black uppercase tracking-tighter ml-19 transition-all duration-300 active:scale-95 cursor-pointer bg-[#F6C90E] text-black hover:scale-[1.02] disabled:opacity-50">Értékelj most</button>
+    <div className="bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-6 md:p-8 flex flex-col justify-between border border-white/10 shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#F6C90E] rounded-full blur-[60px] -mr-10 -mt-10 opacity-10 group-hover:opacity-20 transition-all duration-500 pointer-events-none"></div>
+
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <button onClick={() => navigate("/review")}>
+          <div className="w-16 h-16 bg-[#F6C90E]/10 rounded-full flex items-center justify-center mb-4 border border-[#F6C90E]/20 cursor-pointer">
+            <Star className="text-[#F6C90E]" size={32} fill="currentColor" />
+          </div>
+        </button>
+
+        <h3 className="text-white font-bold text-xl mb-2 tracking-tight">
+          Oktató Értékelése
+        </h3>
+      </div>
     </div>
   );
 }
