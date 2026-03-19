@@ -137,7 +137,7 @@ export default function Register({ onClose, onSwitchToLogin }) {
             Van már fiókod?{" "}
             <button
               onClick={onSwitchToLogin}
-              className="text-yellow-600 font-bold hover:underline">
+              className="text-yellow-600 font-bold hover:underline cursor-pointer">
               Jelentkezz be
             </button>
           </p>

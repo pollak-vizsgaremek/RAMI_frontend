@@ -4,7 +4,6 @@ import logo from "../assets/images/RAMI_logo.png";
 import { Eye, EyeOff } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 
-
 export default function Login({ onClose, onSwitchToRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,13 +15,17 @@ export default function Login({ onClose, onSwitchToRegister }) {
     return () => clearTimeout(timer);
   }, []);
 
-  const isFormValid =email.trim() !== "" && email.includes("@") && password !== "";
+  const isFormValid =
+    email.trim() !== "" && email.includes("@") && password !== "";
   //const API_URL = import.meta.env.API_URL;
   const API_URL = "http://localhost:3300";
-  const LoginFunc  = async () => {
+  const LoginFunc = async () => {
     console.log({ API_URL, email, password });
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const res = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
       toast.success("Sikeres bejelentkezés!");
       console.log(res.data);
     } catch (error) {
@@ -32,7 +35,6 @@ export default function Login({ onClose, onSwitchToRegister }) {
   };
 
   return (
-    
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4 overflow-hidden">
       <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ease-in-out ${
@@ -100,13 +102,23 @@ export default function Login({ onClose, onSwitchToRegister }) {
             Új vagy még?{" "}
             <button
               onClick={onSwitchToRegister}
-              className="text-yellow-600 font-bold hover:underline">
+              className="text-yellow-600 font-bold hover:underline cursor-pointer">
               Regisztrálj itt
             </button>
           </p>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }

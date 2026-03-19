@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
+import Navbar from "../components/Navbar.jsx";
+
+const LoginPage = lazy(() => import("./Login.jsx"));
+const RegisterPage = lazy(() => import("./Register.jsx"));
 
 export default function Review() {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   return (
     <>
+      <Navbar
+        onLoginClick={() => setShowLogin(true)}
+        onRegisterClick={() => setShowRegister(true)}
+      />
       <main className="min-h-screen pt-28 pb-12 px-4 md:px-8 max-w-3xl mx-auto w-full flex flex-col">
         <div className="w-full rounded-4xl p-8 md:p-12 transition-all duration-500 bg-linear-to-br from-[#1A1F25] to-[#303841] border border-white/10 shadow-2xl relative text-white overflow-hidden group">
           {/* Background Glow */}
@@ -23,8 +33,7 @@ export default function Review() {
 
           <form
             className="relative z-10 flex flex-col gap-8"
-            onSubmit={(e) => e.preventDefault()}
-          >
+            onSubmit={(e) => e.preventDefault()}>
             <div>
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">
                 Összesített értékelés
@@ -41,8 +50,7 @@ export default function Review() {
                       star <= (hover || rating)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
-                    }`}
-                  >
+                    }`}>
                     ★
                   </button>
                 ))}
@@ -82,23 +90,42 @@ export default function Review() {
                 Tapasztalatod
               </label>
               <textarea
+                maxLength={200}
                 rows="5"
                 placeholder="Írd ide..."
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all resize-none"
-              ></textarea>
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all resize-none"></textarea>
             </div>
 
             <div className="pt-4 border-t border-white/10 flex justify-end">
               <button
                 type="submit"
-                className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40 text-sm"
-              >
+                className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40 text-sm">
                 Beküldés
               </button>
             </div>
           </form>
         </div>
       </main>
+      <Suspense fallback={null}>
+        {showLogin && (
+          <LoginPage
+            onClose={() => setShowLogin(false)}
+            onSwitchToRegister={() => {
+              setShowLogin(false);
+              setShowRegister(true);
+            }}
+          />
+        )}
+        {showRegister && (
+          <RegisterPage
+            onClose={() => setShowRegister(false)}
+            onSwitchToLogin={() => {
+              setShowRegister(false);
+              setShowLogin(true);
+            }}
+          />
+        )}
+      </Suspense>
     </>
   );
 }
