@@ -22,7 +22,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
   const LoginFunc = async () => {
     console.log({ API_URL, email, password });
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, {
+      const res = await axios.post(`${API_URL}/api/v1/auth/login`, {
         email,
         password,
       });

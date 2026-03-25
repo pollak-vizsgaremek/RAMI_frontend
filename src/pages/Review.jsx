@@ -23,7 +23,7 @@ export default function Review() {
 
   const [Oktatok, setOktatok] = useState([]);
   function getOktatok() {
-    fetch("http://localhost:3300/api/instructors").then(async (res) => {
+    fetch("http://localhost:3300/api/v1/instructor/").then(async (res) => {
       const data = await res.json();
       setOktatok(data);
     });

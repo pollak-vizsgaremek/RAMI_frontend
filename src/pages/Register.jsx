@@ -4,8 +4,7 @@ import logo from "../assets/images/RAMI_logo.png";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Register({ onClose, onSwitchToLogin }) {
-  const [surname, setSurname] = useState("");
-  const [lastname, setLastname] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -18,18 +17,18 @@ export default function Register({ onClose, onSwitchToLogin }) {
   }, []);
 
   const isFormValid =
-    surname.trim() !== "" &&
-    lastname.trim() !== "" &&
+    name.trim() !== "" &&
     email.includes("@") &&
     password.length >= 8 &&
     password === password2;
 
-  const API_URL = import.meta.env.DATABASE_URL;
+  //const API_URL = import.meta.env.DATABASE_URL;
+  const API_URL = "http://localhost:3300";
 
   const RegisterFunc = () => {
-    console.log({ API_URL, surname, lastname, email, password });
+    console.log({ API_URL, name, email, password });
     axios
-      .post(`${API_URL}/auth/register`, { surname, lastname, email, password })
+      .post(`${API_URL}/api/v1/auth/register`, { name, email, password })
       .then((res) => console.log(res.data));
   };
 
@@ -62,8 +61,8 @@ export default function Register({ onClose, onSwitchToLogin }) {
               <input
                 type="text"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 outline-none transition-all"
-                value={surname}
-                onChange={(e) => setSurname(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="flex flex-col group">
@@ -73,8 +72,8 @@ export default function Register({ onClose, onSwitchToLogin }) {
               <input
                 type="text"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 outline-none transition-all"
-                value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
+                //value={lastname}
+                //onChange={(e) => setLastname(e.target.value)}
               />
             </div>
           </div>
@@ -122,6 +121,7 @@ export default function Register({ onClose, onSwitchToLogin }) {
             </div>
           </div>
           {/* Remélem jó lesz */}
+          
           <button
             disabled={!isFormValid}
             onClick={RegisterFunc()}
