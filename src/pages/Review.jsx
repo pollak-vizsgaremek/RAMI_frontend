@@ -1,14 +1,40 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, {useEffect ,useState, Suspense, lazy } from "react";
 import Navbar from "../components/Navbar.jsx";
 
 const LoginPage = lazy(() => import("./Login.jsx"));
 const RegisterPage = lazy(() => import("./Register.jsx"));
 
 export default function Review() {
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
+  const [turelem, setTurelem] = useState(0);
+  const [turelемHover, setTurelемHover] = useState(0);
+
+  const [szaktudas, setSzaktudas] = useState(0);
+  const [szaktudasHover, setSzaktudasHover] = useState(0);
+
+  const [kommunikacio, setKommunikacio] = useState(0);
+  const [kommunikacioHover, setKommunikacioHover] = useState(0);
+
+  const [rugalmasag, setRugalmasag] = useState(0);
+  const [rugalmasagHover, setRugalmasagHover] = useState(0);
+  
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+
+
+  const [Oktatok, setOktatok] = useState([]);
+  function getOktatok() {
+    fetch("http://localhost:3300/api/instructors").then(async (res) => {
+      const data = await res.json();
+      setOktatok(data);
+    });
+  }
+   useEffect(() => {
+    getOktatok();
+  }, []);
+
+
+
+
 
   return (
     <>
@@ -32,14 +58,14 @@ export default function Review() {
           </div>
 
           <form
-            className="relative z-10 flex flex-col gap-8"
+            className="relative z-10 flex flex-col gap-3"
             onSubmit={(e) => e.preventDefault()}>
-            <div>
+            {/* <div>
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">
                 Összesített értékelés
-              </label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
+              </label> */}
+              {/* <div className="flex gap-2">
+                {[1, 2, 3, 4, 5,6,7,8,9,10].map((star) => (
                   <button
                     key={star}
                     type="button"
@@ -54,39 +80,159 @@ export default function Review() {
                     ★
                   </button>
                 ))}
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Oktató
                 </label>
-                <select className="w-full bg-[#21272D] border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all appearance-none">
+                <select id="oktato_mezo" className="w-full bg-[#21272D] border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all appearance-none">
                   <option value="" disabled selected>
                     Válassz egy oktatót
                   </option>
-                  {/** .map() oktatók lekérdezése  */}
+                  {Oktatok.map((oktato) => (
+                    <option key={oktato._id} value={oktato._id}>
+                      {oktato.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
-                  Kommunikáció
-                </label>
-                <select className="w-full bg-[#21272D] border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all appearance-none">
-                  <option value="" disabled selected>
-                    Válassz egy lehetőséget
-                  </option>
-                  <option value="excellent">Tökéletes</option>
-                  <option value="good">Jó</option>
-                  <option value="average">Átlagos</option>
-                  <option value="poor">Nem megfelelő</option>
-                </select>
+                
               </div>
             </div>
 
+
+                  {/* Türelem értékelése */}
+
+            {/* Türelem értékelése */}
+            <div className="mb-10">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 block">
+                Türelem:
+              </label>
+              <div className="flex gap-4 mb-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setTurelem(star)}
+                    onMouseEnter={() => setTurelемHover(star)}
+                    onMouseLeave={() => setTurelемHover(turelem)}
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                      star <= (turelемHover || turelem)
+                        ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
+                        : "text-gray-600"
+                    }`}>
+                    ★
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-4 text-center text-sm text-gray-400">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                    {star}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Szaktudás értékelése */}
+            <div className="mb-10">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 block">
+                Szaktudás:
+              </label>
+              <div className="flex gap-4 mb-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setSzaktudas(star)}
+                    onMouseEnter={() => setSzaktudasHover(star)}
+                    onMouseLeave={() => setSzaktudasHover(szaktudas)}
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                      star <= (szaktudasHover || szaktudas)
+                        ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
+                        : "text-gray-600"
+                    }`}>
+                    ★
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-4 text-center text-sm text-gray-400">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                    {star}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Kommunikáció értékelése */}
+            <div className="mb-10">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 block">
+                Kommunikáció:
+              </label>
+              <div className="flex gap-4 mb-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setKommunikacio(star)}
+                    onMouseEnter={() => setKommunikacioHover(star)}
+                    onMouseLeave={() => setKommunikacioHover(kommunikacio)}
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                      star <= (kommunikacioHover || kommunikacio)
+                        ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
+                        : "text-gray-600"
+                    }`}>
+                    ★
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-4 text-center text-sm text-gray-400">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                    {star}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Rugalmaság értékelése */}
+            <div className="mb-10">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 block">
+                Rugalmaság:
+              </label>
+              <div className="flex gap-4 mb-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRugalmasag(star)}
+                    onMouseEnter={() => setRugalmasagHover(star)}
+                    onMouseLeave={() => setRugalmasagHover(rugalmasag)}
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                      star <= (rugalmasagHover || rugalmasag)
+                        ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
+                        : "text-gray-600"
+                    }`}>
+                    ★
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-4 text-center text-sm text-gray-400">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                    {star}
+                  </span>
+                ))}
+              </div>
+            </div>   
+                  <br />
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+              <label className="text-s font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                 Tapasztalatod
               </label>
               <textarea
