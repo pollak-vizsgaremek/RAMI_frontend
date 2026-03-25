@@ -3,3 +3,21 @@
 .font-brand {
   font-family: "Montserrat", sans-serif;
 }
+
+/* scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 27, 27, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3A4750;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F6C90E;
+}

@@ -4,6 +4,8 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 import Layout from "./layouts/Layout.jsx";
 import { AuthProvider } from "./context/AuthContext";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const InstructorProfile = lazy(() => import("./pages/InstructorProfile.jsx"));
@@ -28,3 +30,9 @@ createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </StrictMode>,
 );
+
+AOS.init({
+  duration: 800,
+  easing: "ease-in-out",
+  once: true,
+});

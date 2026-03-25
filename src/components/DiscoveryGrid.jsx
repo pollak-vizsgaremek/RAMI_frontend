@@ -86,8 +86,8 @@ export default function DiscoveryGrid() {
 
   return (
     <>
-      <section className="max-w-7xl mx-auto px-6 w-full py-10 pb-40">
-        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
+      <section className="max-w-7xl mx-auto px-6 w-full py-8 pb-40">
+        <div data-aos="fade-down" className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
           {/* Row 1 */}
           <TopInstructor instr={topInstr} isVisible={true} />
           <LocationFinderWidget
@@ -95,17 +95,15 @@ export default function DiscoveryGrid() {
             locLoading={locLoading}
             onFindNearest={findNearestCenter}
           />
-          <ReviewWidget index={index} />
+          < ReviewWidget index={index} />
           <OnlineStatusWidget onlineCount={onlineCount} />
-          <WeatherWidget />
+          <StatisticsWidget />
+          
 
           {/* Row 2 */}
-          <StatisticsWidget />
-          <PopularCitiesWidget />
           <RatingWidget />
-
-          {/* Row 3 - Large Items */}
-          <div className="md:col-span-2 md:row-span-2"></div>
+          <WeatherWidget />
+          <PopularCitiesWidget />
         </div>
       </section>
       <QuickActionsWidget />

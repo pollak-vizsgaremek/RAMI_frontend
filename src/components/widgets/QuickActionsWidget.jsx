@@ -42,8 +42,8 @@ const actions = [
 
 export default function QuickActionsWidget() {
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 px-4 pb-4 flex justify-center pointer-events-none">
-      <div className="w-full max-w-4xl bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-8 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group pointer-events-auto">
+    <div className="fixed bottom-0 left-0 w-full z-50 px-4 pb-1 flex justify-center pointer-events-none">
+      <div className="w-full max-w-4xl bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-5 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group pointer-events-auto">
         <div className="absolute -left-10 bottom-0 w-32 h-60 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-10 transition-opacity duration-500" />
 
         <div className="flex justify-between items-center mb-4 relative z-10">
