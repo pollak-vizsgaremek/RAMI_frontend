@@ -17,10 +17,13 @@ export default function Review() {
   const [rugalmasag, setRugalmasag] = useState(0);
   const [rugalmasagHover, setRugalmasagHover] = useState(0);
 
+  const [tapasztalat, setTapasztalat] = useState("");
+
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
   const [Oktatok, setOktatok] = useState([]);
+  
   function getOktatok() {
     fetch("http://localhost:3300/api/v1/instructor/").then(async (res) => {
       const data = await res.json();
@@ -31,6 +34,18 @@ export default function Review() {
     getOktatok();
   }, []);
 
+  const resetRatings = () => {
+    setTurelem(0);
+    setTurelемHover(0);
+    setSzaktudas(0);
+    setSzaktudasHover(0);
+    setKommunikacio(0);
+    setKommunikacioHover(0);
+    setRugalmasag(0);
+    setRugalmasagHover(0);
+    setTapasztalat("");
+  };
+
   return (
     <>
       <Navbar
@@ -38,7 +53,7 @@ export default function Review() {
         onRegisterClick={() => setShowRegister(true)}
       />
       <main className="min-h-screen pt-28 pb-12 px-4 md:px-8 max-w-3xl mx-auto w-full flex flex-col">
-        <div className="w-full rounded-4xl p-8 md:p-12 transition-all duration-500 bg-linear-to-br from-[#1A1F25] to-[#303841] border border-white/10 shadow-2xl relative text-white overflow-hidden group">
+        <div data-aos="fade-down" className="w-full rounded-4xl p-8 md:p-12 transition-all duration-500 bg-linear-to-br from-[#1A1F25] to-[#303841] border border-white/10 shadow-2xl relative text-white overflow-hidden group">
           {/* Background Glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#F6C90E] rounded-full blur-[100px] -mr-20 -mt-20 opacity-10 group-hover:opacity-20 transition-all duration-500 pointer-events-none"></div>
 
@@ -241,10 +256,18 @@ export default function Review() {
                 maxLength={200}
                 rows="5"
                 placeholder="Írd ide..."
+                value={tapasztalat}
+                onChange={(e) => setTapasztalat(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all resize-none"></textarea>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex justify-end">
+            <div className="pt-4 border-t border-white/10 flex justify-end gap-4">
+              <button
+                type="button"
+                onClick={resetRatings}
+                className="whitespace-nowrap w-full md:w-auto bg-gray-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gray-600/20 hover:shadow-gray-600/40 text-sm cursor-pointer">
+                Visszaállítás
+              </button>
               <button
                 type="submit"
                 className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40 text-sm cursor-pointer">
