@@ -162,7 +162,7 @@ export default function Review() {
                     onClick={() => setSzaktudas(star)}
                     onMouseEnter={() => setSzaktudasHover(star)}
                     onMouseLeave={() => setSzaktudasHover(szaktudas)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
+                    className={`text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (szaktudasHover || szaktudas)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -195,7 +195,7 @@ export default function Review() {
                     onClick={() => setKommunikacio(star)}
                     onMouseEnter={() => setKommunikacioHover(star)}
                     onMouseLeave={() => setKommunikacioHover(kommunikacio)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
+                    className={`text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (kommunikacioHover || kommunikacio)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -228,7 +228,7 @@ export default function Review() {
                     onClick={() => setRugalmasag(star)}
                     onMouseEnter={() => setRugalmasagHover(star)}
                     onMouseLeave={() => setRugalmasagHover(rugalmasag)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
+                    className={`text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (rugalmasagHover || rugalmasag)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
