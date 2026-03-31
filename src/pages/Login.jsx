@@ -17,20 +17,34 @@ export default function Login({ onClose, onSwitchToRegister }) {
 
   const isFormValid =
     email.trim() !== "" && email.includes("@") && password !== "";
-  //const API_URL = import.meta.env.API_URL;
+
   const API_URL = "http://localhost:3300";
   const LoginFunc = async () => {
-    console.log({ API_URL, email, password });
     try {
       const res = await axios.post(`${API_URL}/api/v1/auth/login`, {
         email,
         password,
       });
+
+      // 1. Save the token
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.name);
+      localStorage.setItem("userEmail", res.data.email);
+
+      // 2. Dispatch the event so the Navbar instantly transforms!
+      window.dispatchEvent(new Event("authChange"));
+
+      // 3. Show a single success message
       toast.success("Sikeres bejelentkezés!");
-      console.log(res.data);
+
+      // 4. Close the modal smoothly
+      setTimeout(() => {
+        if (onClose) onClose();
+      }, 1500);
     } catch (error) {
       console.error(error);
-      toast.error("Hiba történt a bejelentkezés során.");
+      const errorMessage = error.response?.data?.message || "Hiba történt a bejelentkezés során.";
+      toast.error(errorMessage);
     }
   };
 
@@ -90,7 +104,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
           <button
             disabled={!isFormValid}
             onClick={LoginFunc}
-            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 ${
+            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 cursor-pointer ${
               isFormValid
                 ? "bg-black hover:bg-gray-800 shadow-lg"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -108,17 +122,6 @@ export default function Login({ onClose, onSwitchToRegister }) {
           </p>
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </div>
   );
 }

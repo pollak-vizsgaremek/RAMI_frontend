@@ -1,4 +1,4 @@
-import React, {useEffect ,useState, Suspense, lazy } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import Navbar from "../components/Navbar.jsx";
 
 const LoginPage = lazy(() => import("./Login.jsx"));
@@ -16,10 +16,9 @@ export default function Review() {
 
   const [rugalmasag, setRugalmasag] = useState(0);
   const [rugalmasagHover, setRugalmasagHover] = useState(0);
-  
+
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-
 
   const [Oktatok, setOktatok] = useState([]);
   function getOktatok() {
@@ -28,13 +27,9 @@ export default function Review() {
       setOktatok(data);
     });
   }
-   useEffect(() => {
+  useEffect(() => {
     getOktatok();
   }, []);
-
-
-
-
 
   return (
     <>
@@ -64,7 +59,7 @@ export default function Review() {
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">
                 Összesített értékelés
               </label> */}
-              {/* <div className="flex gap-2">
+            {/* <div className="flex gap-2">
                 {[1, 2, 3, 4, 5,6,7,8,9,10].map((star) => (
                   <button
                     key={star}
@@ -88,7 +83,9 @@ export default function Review() {
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Oktató
                 </label>
-                <select id="oktato_mezo" className="w-full bg-[#21272D] border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all appearance-none">
+                <select
+                  id="oktato_mezo"
+                  className="w-full bg-[#21272D] border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-all appearance-none cursor-pointer">
                   <option value="" disabled selected>
                     Válassz egy oktatót
                   </option>
@@ -99,13 +96,10 @@ export default function Review() {
                   ))}
                 </select>
               </div>
-              <div>
-                
-              </div>
+              <div></div>
             </div>
 
-
-                  {/* Türelem értékelése */}
+            {/* Türelem értékelése */}
 
             {/* Türelem értékelése */}
             <div className="mb-10">
@@ -120,7 +114,7 @@ export default function Review() {
                     onClick={() => setTurelem(star)}
                     onMouseEnter={() => setTurelемHover(star)}
                     onMouseLeave={() => setTurelемHover(turelem)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (turelемHover || turelem)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -131,7 +125,9 @@ export default function Review() {
               </div>
               <div className="flex gap-4 text-center text-sm text-gray-400">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                  <span
+                    key={`label-${star}`}
+                    className="w-8 flex justify-center">
                     {star}
                   </span>
                 ))}
@@ -151,7 +147,7 @@ export default function Review() {
                     onClick={() => setSzaktudas(star)}
                     onMouseEnter={() => setSzaktudasHover(star)}
                     onMouseLeave={() => setSzaktudasHover(szaktudas)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (szaktudasHover || szaktudas)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -162,7 +158,9 @@ export default function Review() {
               </div>
               <div className="flex gap-4 text-center text-sm text-gray-400">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                  <span
+                    key={`label-${star}`}
+                    className="w-8 flex justify-center">
                     {star}
                   </span>
                 ))}
@@ -182,7 +180,7 @@ export default function Review() {
                     onClick={() => setKommunikacio(star)}
                     onMouseEnter={() => setKommunikacioHover(star)}
                     onMouseLeave={() => setKommunikacioHover(kommunikacio)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (kommunikacioHover || kommunikacio)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -193,7 +191,9 @@ export default function Review() {
               </div>
               <div className="flex gap-4 text-center text-sm text-gray-400">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                  <span
+                    key={`label-${star}`}
+                    className="w-8 flex justify-center">
                     {star}
                   </span>
                 ))}
@@ -213,7 +213,7 @@ export default function Review() {
                     onClick={() => setRugalmasag(star)}
                     onMouseEnter={() => setRugalmasagHover(star)}
                     onMouseLeave={() => setRugalmasagHover(rugalmasag)}
-                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 ${
+                    className={`w-8 h-8 flex items-center justify-center text-4xl transition-all hover:scale-110 active:scale-95 cursor-pointer ${
                       star <= (rugalmasagHover || rugalmasag)
                         ? "text-[#F6C90E] drop-shadow-[0_0_8px_rgba(246,201,14,0.5)]"
                         : "text-gray-600"
@@ -224,13 +224,15 @@ export default function Review() {
               </div>
               <div className="flex gap-4 text-center text-sm text-gray-400">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-                  <span key={`label-${star}`} className="w-8 flex justify-center">
+                  <span
+                    key={`label-${star}`}
+                    className="w-8 flex justify-center">
                     {star}
                   </span>
                 ))}
               </div>
-            </div>   
-                  <br />
+            </div>
+            <br />
             <div>
               <label className="text-s font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                 Tapasztalatod
@@ -245,7 +247,7 @@ export default function Review() {
             <div className="pt-4 border-t border-white/10 flex justify-end">
               <button
                 type="submit"
-                className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40 text-sm">
+                className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-10 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40 text-sm cursor-pointer">
                 Beküldés
               </button>
             </div>

@@ -1,6 +1,6 @@
 import React from "react";
-import { BookOpen, User, Phone, Download, Newspaper } from "lucide-react";
-import { Link } from "react-router"; // Fixed import
+import { BookOpen, Phone, Download, Newspaper } from "lucide-react"; // Removed unused User
+import { Link } from "react-router-dom"; // Assuming you meant react-router-dom
 
 const actions = [
   {
@@ -16,13 +16,6 @@ const actions = [
     color: "text-emerald-400",
     bg: "bg-white/5 hover:bg-emerald-400 hover:text-black",
     href: "https://shop.webjogsi.hu",
-  },
-  {
-    icon: User,
-    label: "Profil",
-    color: "text-purple-400",
-    bg: "bg-white/5 hover:bg-purple-400 hover:text-black",
-    href: "/profile", // Internal link
   },
   {
     icon: Newspaper,
@@ -53,7 +46,8 @@ export default function QuickActionsWidget() {
           </h3>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
+        {/* FIXED: Changed md:grid-cols-5 to md:grid-cols-4 to center the 4 items perfectly */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
           {actions.map((action, idx) => {
             const isInternal = action.href.startsWith("/");
             const buttonStyles = `flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-300 group/btn border border-white/5 no-underline ${action.bg}`;
@@ -70,7 +64,6 @@ export default function QuickActionsWidget() {
               </>
             );
 
-            // Conditional rendering: Link for internal, <a> for external
             return isInternal ? (
               <Link key={idx} to={action.href} className={buttonStyles}>
                 {content}

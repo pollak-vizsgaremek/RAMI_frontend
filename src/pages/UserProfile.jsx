@@ -1,5 +1,5 @@
-import React, { useState, Suspense, lazy } from "react";
-import Navbar from "../components/Navbar.jsx";
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import Navbar from "../components/Navbar.jsx"; // Ensure this path is correct
 
 const LoginPage = lazy(() => import("./Login.jsx"));
 const RegisterPage = lazy(() => import("./Register.jsx"));
@@ -7,6 +7,17 @@ const RegisterPage = lazy(() => import("./Register.jsx"));
 export default function UserProfile() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [userData, setUserData] = useState({ name: "", email: "", phone: "" });
+
+  // 1. Fetch real user data from local storage when the page loads
+  useEffect(() => {
+    const name = localStorage.getItem("userName") || "Ismeretlen Felhasználó";
+    const email = localStorage.getItem("userEmail") || "Nincs e-mail megadva";
+    // If you saved a phone number, get it here, else use a placeholder or leave blank
+    const phone = localStorage.getItem("userPhone") || "Nincs megadva";
+
+    setUserData({ name, email, phone });
+  }, []);
 
   return (
     <>
@@ -32,11 +43,13 @@ export default function UserProfile() {
                 <span className="bg-[#F6C90E]/20 text-[#F6C90E] border border-[#F6C90E]/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-3">
                   Felhasználó
                 </span>
+                {/* 2. Display the real name! */}
                 <h2 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">
-                  Lackó Mackó
+                  {userData.name}
                 </h2>
+                {/* Removed the hardcoded '23 éves' since we don't have age data yet */}
                 <p className="opacity-90 font-medium text-gray-400 text-lg">
-                  23 éves
+                  Regisztrált tag
                 </p>
               </div>
 
@@ -54,20 +67,26 @@ export default function UserProfile() {
                   <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                     E-mail
                   </h4>
+                  {/* 3. Display the real email! */}
                   <a
-                    href="mailto:zoltan.kovacs@example.com"
+                    href={`mailto:${userData.email}`}
                     className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md">
-                    macko.lacko@example.com
+                    {userData.email}
                   </a>
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                     Telefon
                   </h4>
+                  {/* 4. Display the phone number, or our fallback message */}
                   <a
-                    href="tel:+36301234567"
-                    className="font-medium text-white hover:text-[#F6C90E] transition-colors text-lg">
-                    +36 30 123 4567
+                    href={
+                      userData.phone !== "Nincs megadva"
+                        ? `tel:${userData.phone}`
+                        : "#"
+                    }
+                    className={`font-medium text-lg transition-colors ${userData.phone !== "Nincs megadva" ? "text-white hover:text-[#F6C90E]" : "text-gray-500 cursor-default"}`}>
+                    {userData.phone}
                   </a>
                 </div>
               </div>

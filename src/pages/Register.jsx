@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/images/RAMI_logo.png";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "react-toastify"; // Notice: ToastContainer is no longer imported here!
 
 export default function Register({ onClose, onSwitchToLogin }) {
   const [name, setName] = useState("");
@@ -25,11 +26,36 @@ export default function Register({ onClose, onSwitchToLogin }) {
   //const API_URL = import.meta.env.DATABASE_URL;
   const API_URL = "http://localhost:3300";
 
-  const RegisterFunc = () => {
-    console.log({ API_URL, name, email, password });
-    axios
-      .post(`${API_URL}/api/v1/auth/register`, { name, email, password })
-      .then((res) => console.log(res.data));
+  const RegisterFunc = async () => {
+    try {
+      const res = await axios.post(`${API_URL}/api/v1/auth/register`, {
+        name,
+        email,
+        password,
+      });
+
+      // 1. Save the token and user details so the Navbar can read them instantly!
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", name); // We use the 'name' state from the form
+      localStorage.setItem("userEmail", email); // We use the 'email' state from the form
+
+      // 2. Dispatch the event so the Navbar instantly transforms into the profile dropdown
+      window.dispatchEvent(new Event("authChange"));
+
+      // 3. Show a single success message
+      toast.success("Sikeres regisztráció!");
+
+      // 4. Close the modal after a short delay so they can see the toast
+      setTimeout(() => {
+        if (onClose) onClose();
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      // Display the exact error message from the backend (e.g., "Felhasználó már létezik!")
+      const errorMessage =
+        error.response?.data?.message || "Hiba történt a regisztráció során.";
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -53,27 +79,16 @@ export default function Register({ onClose, onSwitchToLogin }) {
         </div>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="gap-4">
             <div className="flex flex-col group">
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 group-focus-within:text-black">
-                Vezetéknév
+                Teljes név
               </label>
               <input
                 type="text"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 outline-none transition-all"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col group">
-              <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 group-focus-within:text-black">
-                Keresztnév
-              </label>
-              <input
-                type="text"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 outline-none transition-all"
-                //value={lastname}
-                //onChange={(e) => setLastname(e.target.value)}
               />
             </div>
           </div>
@@ -120,12 +135,10 @@ export default function Register({ onClose, onSwitchToLogin }) {
               </button>
             </div>
           </div>
-          {/* Remélem jó lesz */}
-          
           <button
             disabled={!isFormValid}
-            onClick={RegisterFunc()}
-            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 ${
+            onClick={RegisterFunc}
+            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 cursor-pointer ${
               isFormValid
                 ? "bg-black hover:bg-gray-800 shadow-lg"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
