@@ -28,8 +28,15 @@ export default function Login({ onClose, onSwitchToRegister }) {
 
       // 1. Save the token
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("userName", res.data.name);
-      localStorage.setItem("userEmail", res.data.email);
+
+      // Safe fallbacks depending on how your backend sends the data!
+      const userId =
+        res.data.user?._id || res.data._id || res.data.userId;
+      const userName =
+        res.data.user?.name || res.data.name || "Felhasználó";
+
+      if (userId) localStorage.setItem("userId", userId);
+      if (userName) localStorage.setItem("userName", userName);
 
       // 2. Dispatch the event so the Navbar instantly transforms!
       window.dispatchEvent(new Event("authChange"));

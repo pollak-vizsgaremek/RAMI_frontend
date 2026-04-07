@@ -4,8 +4,6 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 import Layout from "./layouts/Layout.jsx";
 import { AuthProvider } from "./context/AuthContext";
-import AOS from "aos";
-import "aos/dist/aos.css";
 
 const HomePage = lazy(() => import("./pages/Home.jsx"));
 const InstructorProfile = lazy(() => import("./pages/InstructorProfile.jsx"));
@@ -20,19 +18,14 @@ createRoot(document.getElementById("root")).render(
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/instructor/:id" element={<InstructorProfile />} />
             <Route path="/instructor-profile" element={<InstructorProfile />} />
-            <Route path="/user-profile" element={<UserProfile/>}/>
-            <Route path="/review" element={<ReviewPage/>}></Route>
-            <Route path="/profile" element={<ProfilePage/>}></Route>
+            <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/review" element={<ReviewPage />}></Route>
+            <Route path="/profile" element={<ProfilePage />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>,
 );
-
-AOS.init({
-  duration: 800,
-  easing: "ease-in-out",
-  once: true,
-});

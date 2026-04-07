@@ -67,7 +67,7 @@ export default function LocationFinderWidget({
       <div className="mt-4 relative z-10">
         {locLoading && (
           <div className="w-full bg-white/5 h-1 rounded-full mb-3 overflow-hidden">
-            <div className="bg-[#F6C90E] h-full animate-[progress_1.5s_ease-in-out_infinite] w-1/3" />
+            <div className="bg-[#F6C90E] h-full w-1/3" />
           </div>
         )}
         <button

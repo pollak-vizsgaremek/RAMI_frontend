@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate!
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/RAMI_logo.png";
-import { Search, User, Users, Star, LogOut } from "lucide-react";
+import { Search, User, Users, Star, LogOut, MapPin } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = ({
@@ -9,17 +9,22 @@ const Navbar = ({
   onRegisterClick,
   onSearchChange,
   searchValue,
+  searchResults = [],
+  isSearching = false,
+  searchError = null, // Added searchError handling
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [userName, setUserName] = useState("Felhasználó");
+
   const menuRef = useRef(null);
-  const navigate = useNavigate(); // Initialize the navigate function!
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
 
   const checkAuth = () => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
-
     if (token) {
       const savedName =
         localStorage.getItem("userName") ||
@@ -40,6 +45,9 @@ const Navbar = ({
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchDropdown(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -47,7 +55,6 @@ const Navbar = ({
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Biztosan ki szeretnél jelentkezni?");
-
     if (!confirmLogout) return;
 
     localStorage.removeItem("token");
@@ -59,9 +66,13 @@ const Navbar = ({
     toast.info("Sikeresen kijelentkeztél!");
 
     window.dispatchEvent(new Event("authChange"));
-
-    // Redirect the user to the home page!
     navigate("/");
+  };
+
+  const handleInstructorClick = (instructorId) => {
+    setShowSearchDropdown(false);
+    if (onSearchChange) onSearchChange("");
+    navigate(`/instructor/${instructorId}`);
   };
 
   return (
@@ -81,7 +92,7 @@ const Navbar = ({
             </span>
           </Link>
 
-          <div className="grow max-w-xl mx-8 hidden md:block">
+          <div className="grow max-w-xl mx-8 hidden md:block" ref={searchRef}>
             <div className="relative">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -91,9 +102,54 @@ const Navbar = ({
                 type="text"
                 placeholder="Keresés oktató nevére, pl. Kovács János..."
                 value={searchValue}
-                onChange={(e) => onSearchChange?.(e.target.value)}
+                onChange={(e) => {
+                  onSearchChange?.(e.target.value);
+                  setShowSearchDropdown(true);
+                }}
+                onFocus={() => setShowSearchDropdown(true)}
                 className="w-full pl-10 pr-4 py-2 bg-[#303841] text-white placeholder-gray-400 rounded-full border border-transparent focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-colors duration-200 text-sm outline-none"
               />
+
+              {/* SEARCH DROPDOWN - ANIMATION REMOVED */}
+              {showSearchDropdown && searchValue?.trim().length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100 max-h-80 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-sm text-gray-500 font-medium">
+                      Keresés folyamatban...
+                    </div>
+                  ) : searchError ? (
+                    <div className="p-4 text-center text-sm text-red-500 font-bold bg-red-50">
+                      ⚠️ {searchError}
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    searchResults.map((instructor) => {
+                      const schoolName =
+                        instructor.schools?.[0]?.name ||
+                        instructor.schools?.[0] ||
+                        "Ismeretlen Autósiskola";
+
+                      return (
+                        <div
+                          key={instructor._id}
+                          onClick={() => handleInstructorClick(instructor._id)}
+                          className="p-3 hover:bg-[#F6C90E]/10 cursor-pointer border-b border-gray-50 last:border-0 transition-colors">
+                          <div className="font-bold text-gray-900">
+                            {instructor.name}
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <MapPin size={12} className="mr-1 text-gray-400" />
+                            {schoolName}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="p-4 text-center text-sm text-gray-500 font-medium">
+                      Nem találtunk ilyen oktatót.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -126,32 +182,26 @@ const Navbar = ({
                 </button>
 
                 {isMenuOpen && (
-                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-2xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 border border-gray-100">
-                    {/* CHANGED TO A LINK to navigate to the Profile Page! */}
+                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-2xl overflow-hidden py-2 border border-gray-100">
                     <Link
                       to="/profile"
-                      className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
-                      <User size={18} className="mr-3 text-gray-400" />
-                      Profil
+                      className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
+                      onClick={() => setIsMenuOpen(false)}>
+                      <User size={18} className="mr-3 text-gray-400" /> Profil
                     </Link>
-
                     <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
-                      <Users size={18} className="mr-3 text-gray-400" />
+                      <Users size={18} className="mr-3 text-gray-400" />{" "}
                       Oktatóim
                     </button>
-
                     <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
-                      <Star size={18} className="mr-3 text-gray-400" />
+                      <Star size={18} className="mr-3 text-gray-400" />{" "}
                       Értékeléseim
                     </button>
-
                     <div className="h-px bg-gray-100 my-1"></div>
-
                     <button
                       onClick={handleLogout}
                       className="flex items-center w-full px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors cursor-pointer">
-                      <LogOut size={18} className="mr-3" />
-                      Kijelentkezés
+                      <LogOut size={18} className="mr-3" /> Kijelentkezés
                     </button>
                   </div>
                 )}

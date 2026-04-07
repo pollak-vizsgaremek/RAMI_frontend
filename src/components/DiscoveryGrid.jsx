@@ -87,7 +87,7 @@ export default function DiscoveryGrid() {
   return (
     <>
       <section className="max-w-7xl mx-auto px-6 w-full py-8 pb-40">
-        <div data-aos="fade-down" className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[160px] gap-4">
           {/* Row 1 */}
           <TopInstructor instr={topInstr} isVisible={true} />
           <LocationFinderWidget

@@ -43,7 +43,7 @@ export default function QuickActionsWidget() {
         {!isExpanded && (
           <button
             onClick={() => setIsExpanded(true)}
-            className="w-full bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-full py-3 px-4 shadow-2xl border border-white/10 flex items-center justify-center relative overflow-hidden group hover:border-white/20 transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-2"
+            className="w-full bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-full py-3 px-4 shadow-2xl border border-white/10 flex items-center justify-center relative overflow-hidden group hover:border-white/20 transition-all duration-300"
           >
             <div className="absolute -left-10 bottom-0 w-32 h-60 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-10 transition-opacity duration-500" />
             <div className="relative z-10 flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function QuickActionsWidget() {
         )}
 
         {isExpanded && (
-          <div className="w-full bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-t-4xl p-5 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group pointer-events-auto animate-slide-in-up">
+          <div className="w-full bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-t-4xl p-5 shadow-2xl border border-white/10 flex flex-col justify-center relative overflow-hidden group pointer-events-auto">
             <div className="absolute -left-10 bottom-0 w-32 h-60 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-10 transition-opacity duration-500" />
 
             <div className="flex justify-between items-center mb-4 relative z-10">
@@ -73,7 +73,7 @@ export default function QuickActionsWidget() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 relative z-10 animate-in fade-in-0 duration-300">
+            <div className="grid grid-cols-2 gap-3 relative z-10 duration-300">
               {actions.map((action, idx) => {
                 const isInternal = action.href.startsWith("/");
                 const buttonStyles = `flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-300 group/btn border border-white/5 no-underline hover:scale-110 ${action.bg}`;
@@ -96,7 +96,7 @@ export default function QuickActionsWidget() {
                     to={action.href} 
                     className={buttonStyles}
                     style={{
-                      animation: `fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s both`
+                      //animation: `fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s both`
                     }}
                   >
                     {content}
@@ -109,7 +109,7 @@ export default function QuickActionsWidget() {
                     rel="noopener noreferrer"
                     className={buttonStyles}
                     style={{
-                      animation: `fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s both`
+                      //animation: `fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s both`
                     }}
                   >
                     {content}
