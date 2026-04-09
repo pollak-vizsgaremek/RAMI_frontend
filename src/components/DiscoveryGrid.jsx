@@ -8,6 +8,7 @@ import RatingWidget from "./widgets/RatingWidget";
 import QuickActionsWidget from "./widgets/QuickActionsWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
 import TopInstructor from "./widgets/TopInstructor";
+import TipsAndTricksWidget from "./widgets/TipsAndTricksWidget";
 import { EXAM_CENTERS } from "./widgets/constants";
 
 export default function DiscoveryGrid() {
@@ -104,6 +105,7 @@ export default function DiscoveryGrid() {
           <RatingWidget />
           <WeatherWidget />
           <PopularCitiesWidget />
+          <TipsAndTricksWidget />
         </div>
       </section>
       <QuickActionsWidget />
