@@ -103,8 +103,8 @@ export default function DiscoveryGrid() {
 
           {/* Row 2 */}
           <RatingWidget />
-          <WeatherWidget />
           <PopularCitiesWidget />
+          <WeatherWidget />
           <TipsAndTricksWidget />
         </div>
       </section>

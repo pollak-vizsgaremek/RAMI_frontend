@@ -11,7 +11,7 @@ export default function TopInstructor({ instr, isVisible }) {
 
       <div className="relative z-10">
         <span className="bg-[#F6C90E]/20 text-[#F6C90E] border border-[#F6C90E]/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-6">
-          Kiemelt Oktató
+          A hónap oktatója
         </span>
         <h3 className="text-4xl font-black leading-tight text-white mb-2">
           {instr.name}
