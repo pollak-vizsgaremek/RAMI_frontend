@@ -11,7 +11,7 @@ const Navbar = ({
   searchValue,
   searchResults = [],
   isSearching = false,
-  searchError = null, // Added searchError handling
+  searchError = null,
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,12 +23,13 @@ const Navbar = ({
   const navigate = useNavigate();
 
   const checkAuth = () => {
-    const token = localStorage.getItem("token");
+    // JAVÍTVA: Csak sessionStorage-ből olvasunk!
+    const token = sessionStorage.getItem("token");
     setIsLoggedIn(!!token);
     if (token) {
       const savedName =
-        localStorage.getItem("userName") ||
-        localStorage.getItem("userEmail") ||
+        sessionStorage.getItem("userName") ||
+        sessionStorage.getItem("userEmail") ||
         "Felhasználó";
       setUserName(savedName);
     }
@@ -57,9 +58,11 @@ const Navbar = ({
     const confirmLogout = window.confirm("Biztosan ki szeretnél jelentkezni?");
     if (!confirmLogout) return;
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
+    // JAVÍTVA: A sessionStorage törlése
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("userEmail");
 
     setIsLoggedIn(false);
     setIsMenuOpen(false);
@@ -110,7 +113,6 @@ const Navbar = ({
                 className="w-full pl-10 pr-4 py-2 bg-[#303841] text-white placeholder-gray-400 rounded-full border border-transparent focus:border-[#F6C90E] focus:ring-1 focus:ring-[#F6C90E] transition-colors duration-200 text-sm outline-none"
               />
 
-              {/* SEARCH DROPDOWN - ANIMATION REMOVED */}
               {showSearchDropdown && searchValue?.trim().length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100 max-h-80 overflow-y-auto">
                   {isSearching ? (
@@ -127,7 +129,6 @@ const Navbar = ({
                         instructor.schools?.[0]?.name ||
                         instructor.schools?.[0] ||
                         "Ismeretlen Autósiskola";
-
                       return (
                         <div
                           key={instructor._id}
@@ -215,12 +216,7 @@ const Navbar = ({
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
-        newestOnTop={false}
         closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
       />
     </>
   );

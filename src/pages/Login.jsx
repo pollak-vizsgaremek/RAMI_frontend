@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/images/RAMI_logo.png";
 import { Eye, EyeOff } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function Login({ onClose, onSwitchToRegister }) {
   const [email, setEmail] = useState("");
@@ -17,40 +17,33 @@ export default function Login({ onClose, onSwitchToRegister }) {
 
   const isFormValid =
     email.trim() !== "" && email.includes("@") && password !== "";
-
   const API_URL = "http://localhost:3300";
-  const LoginFunc = async () => {
+
+  const LoginFunc = async (e) => {
+    if (e) e.preventDefault();
     try {
       const res = await axios.post(`${API_URL}/api/v1/auth/login`, {
         email,
         password,
       });
 
-      // 1. Save the token
-      localStorage.setItem("token", res.data.token);
+      // JAVÍTVA: Szigorúan csak SessionStorage-be mentünk minden adatot!
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("userId", res.data.userId);
+      sessionStorage.setItem("userName", res.data.name);
+      sessionStorage.setItem("userEmail", res.data.email);
 
-      // Safe fallbacks depending on how your backend sends the data!
-      const userId =
-        res.data.user?._id || res.data._id || res.data.userId;
-      const userName =
-        res.data.user?.name || res.data.name || "Felhasználó";
-
-      if (userId) localStorage.setItem("userId", userId);
-      if (userName) localStorage.setItem("userName", userName);
-
-      // 2. Dispatch the event so the Navbar instantly transforms!
+      // Értesítjük a Navbart, hogy változás történt!
       window.dispatchEvent(new Event("authChange"));
-
-      // 3. Show a single success message
       toast.success("Sikeres bejelentkezés!");
 
-      // 4. Close the modal smoothly
       setTimeout(() => {
         if (onClose) onClose();
       }, 1500);
     } catch (error) {
       console.error(error);
-      const errorMessage = error.response?.data?.message || "Hiba történt a bejelentkezés során.";
+      const errorMessage =
+        error.response?.data?.message || "Hiba történt a bejelentkezés során.";
       toast.error(errorMessage);
     }
   };
@@ -58,24 +51,17 @@ export default function Login({ onClose, onSwitchToRegister }) {
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4 overflow-hidden">
       <div
-        className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ease-in-out ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ease-in-out ${mounted ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
-
       <div
-        className={`relative w-full max-w-110 bg-white rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${
-          mounted
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-8 scale-95"
-        }`}>
+        className={`relative w-full max-w-110 bg-white rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"}`}>
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="RAMI logo" className="h-16 mb-2" />
           <h2 className="text-2xl font-black text-gray-900">Üdvözlünk újra!</h2>
         </div>
 
-        <div className="space-y-5">
+        <form className="space-y-5" onSubmit={LoginFunc}>
           <div className="flex flex-col group">
             <label className="text-xs font-bold text-gray-400 uppercase mb-2 ml-1 transition-all group-focus-within:text-black">
               E-mail
@@ -109,25 +95,22 @@ export default function Login({ onClose, onSwitchToRegister }) {
           </div>
 
           <button
+            type="submit"
             disabled={!isFormValid}
-            onClick={LoginFunc}
-            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 cursor-pointer ${
-              isFormValid
-                ? "bg-black hover:bg-gray-800 shadow-lg"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}>
+            className={`w-full rounded-xl py-4 font-bold text-white mt-4 transition-all transform active:scale-95 cursor-pointer ${isFormValid ? "bg-black hover:bg-gray-800 shadow-lg" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
             Bejelentkezés
           </button>
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Új vagy még?{" "}
             <button
+              type="button"
               onClick={onSwitchToRegister}
               className="text-yellow-600 font-bold hover:underline cursor-pointer">
               Regisztrálj itt
             </button>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

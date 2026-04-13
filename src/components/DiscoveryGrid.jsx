@@ -5,6 +5,7 @@ import OnlineStatusWidget from "./widgets/OnlineStatusWidget";
 import StatisticsWidget from "./widgets/StatisticsWidget";
 import PopularCitiesWidget from "./widgets/PopularCitiesWidget";
 import RatingWidget from "./widgets/RatingWidget";
+import BrowseInstructorsWidget from "./widgets/BrowseInstructorsWidget";
 import QuickActionsWidget from "./widgets/QuickActionsWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
 import TopInstructor from "./widgets/TopInstructor";
@@ -13,7 +14,6 @@ import { EXAM_CENTERS } from "./widgets/constants";
 
 export default function DiscoveryGrid() {
   const [index, setIndex] = useState(0);
-  const [onlineCount, setOnlineCount] = useState(142);
   const [nearestCenter, setNearestCenter] = useState(null);
   const [locLoading, setLocLoading] = useState(false);
 
@@ -21,7 +21,6 @@ export default function DiscoveryGrid() {
     const interval = setInterval(() => {
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % 3);
-        setOnlineCount((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
       }, 400);
     }, 8000);
     return () => clearInterval(interval);
@@ -96,10 +95,11 @@ export default function DiscoveryGrid() {
             locLoading={locLoading}
             onFindNearest={findNearestCenter}
           />
-          < ReviewWidget index={index} />
-          <OnlineStatusWidget onlineCount={onlineCount} />
+          <ReviewWidget index={index} />
+          <div className="h-full w-full rounded-2xl overflow-hidden shadow-md">
+            <BrowseInstructorsWidget />
+          </div>
           <StatisticsWidget />
-          
 
           {/* Row 2 */}
           <RatingWidget />

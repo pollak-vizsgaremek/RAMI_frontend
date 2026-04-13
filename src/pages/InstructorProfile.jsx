@@ -73,14 +73,14 @@ export default function InstructorProfile() {
   };
 
   const handleReviewClick = () => {
-    if (!localStorage.getItem("token"))
+    if (!sessionStorage.getItem("token"))
       return toast.warning("Jelentkezz be az értékeléshez!");
     navigate(`/review?instructorId=${id}`);
   };
 
   const handleHelpfulClick = async (reviewId) => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
     if (!token || !userId) return toast.warning("Jelentkezz be a kedveléshez!");
 
     try {
@@ -368,7 +368,7 @@ export default function InstructorProfile() {
                     <div className="flex items-center gap-4 mt-2">
                       <button
                         onClick={() => handleHelpfulClick(review._id)}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${review.helpfulUsers?.includes(localStorage.getItem("userId")) ? "bg-[#F6C90E] text-black shadow-[0_0_10px_rgba(246,201,14,0.3)]" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}>
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${review.helpfulUsers?.includes(sessionStorage.getItem("userId")) ? "bg-[#F6C90E] text-black shadow-[0_0_10px_rgba(246,201,14,0.3)]" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}>
                         👍 Hasznos ({review.helpfulCount || 0})
                       </button>
                     </div>

@@ -12,21 +12,21 @@ export default function UserProfile() {
   const [loadingReviews, setLoadingReviews] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       toast.error("Kérlek, jelentkezz be a profilod megtekintéséhez.");
       navigate("/");
       return;
     }
 
-    const name = localStorage.getItem("userName") || "Ismeretlen Felhasználó";
-    const email = localStorage.getItem("userEmail") || "Nincs e-mail megadva";
-    const phone = localStorage.getItem("userPhone") || "Nincs megadva";
+    const name = sessionStorage.getItem("userName") || "Ismeretlen Felhasználó";
+    const email = sessionStorage.getItem("userEmail") || "Nincs e-mail megadva";
+    const phone = sessionStorage.getItem("userPhone") || "Nincs megadva";
     setUserData({ name, email, phone });
 
     const fetchMyReviews = async () => {
       try {
-        const userId = localStorage.getItem("userId");
+        const userId = sessionStorage.getItem("userId");
         const res = await axios.get(
           `http://localhost:3300/api/v1/review/user/${userId}`,
           {
@@ -58,7 +58,7 @@ export default function UserProfile() {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`http://localhost:3300/api/v1/review/${reviewId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
