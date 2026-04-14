@@ -24,9 +24,9 @@ export default function TopInstructor({ instr, isVisible }) {
         Profil megtekintése
       </button> */}
       <Link
-        to="/instructor-profile"
+        to="/leaderboard"
         className="relative z-10 w-fit bg-[#F6C90E] text-black px-6 py-3 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40">
-        Profil megtekintése
+        Ranglista megtekintése
       </Link>
     </div>
   );
