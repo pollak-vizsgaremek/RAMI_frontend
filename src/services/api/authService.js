@@ -1,6 +1,11 @@
 // services/authService.js
 import axios from "axios";
-import { setToken, setStoredUser, clearAll, getToken } from "./storageService";
+import {
+  setToken,
+  setStoredUser,
+  clearAll,
+  getToken,
+} from "../storage/storageService.js";
 
 // ─── Axios instance ───────────────────────────────────────────────────────────
 
@@ -70,7 +75,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // ─── register ─────────────────────────────────────────────────────────────────

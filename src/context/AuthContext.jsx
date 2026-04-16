@@ -1,8 +1,8 @@
 // context/AuthContext.jsx
 import React, { useState, useEffect } from "react";
-import { AuthContext } from "../hooks/useAuth";
-import { getStoredUser, getToken } from "../services/storageService";
-import { logout as logoutService } from "../services/authService";
+import { AuthContext } from "../hooks/useAuth.js";
+import { getStoredUser, getToken } from "../services/storage/storageService.js";
+import { logout as logoutService } from "../services/api/authService.js";
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 // Wrap your App (or main.jsx) with <AuthProvider> so every component
@@ -10,8 +10,11 @@ import { logout as logoutService } from "../services/authService";
 
 export function AuthProvider({ children }) {
   // Seed from localStorage so a page refresh doesn't log the user out
-  const [user, setUser] = useState(getStoredUser);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!getToken() && !!getStoredUser());
+  const storedUser = getStoredUser();
+  const [user, setUser] = useState(storedUser);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!getToken() && !!storedUser,
+  );
 
   // Listen for the forced-logout event fired by authService's interceptor
   // when the refresh token has expired and the user must log in again.
@@ -32,6 +35,15 @@ export function AuthProvider({ children }) {
     setIsLoggedIn(true);
   };
 
+  // Check if user has admin (creator) role
+  const isAdmin = () => user?.role === "creator";
+
+  // Check if user is an instructor
+  const isInstructor = () => user?.role === "instructor";
+
+  // Check if user is a student
+  const isStudent = () => user?.role === "student" || !user?.role;
+
   // Called wherever you need to log out (navbar, settings, etc.)
   const logout = async () => {
     await logoutService();
@@ -40,7 +52,16 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, loginSuccess, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoggedIn,
+        loginSuccess,
+        logout,
+        isAdmin,
+        isInstructor,
+        isStudent,
+      }}>
       {children}
     </AuthContext.Provider>
   );

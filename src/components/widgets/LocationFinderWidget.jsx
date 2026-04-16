@@ -1,13 +1,12 @@
 import React from "react";
 import { Navigation, ChevronRight } from "lucide-react";
-import { EXAM_CENTERS } from "./constants";
+import { EXAM_CENTERS } from "./widgetConstants.js";
 
 export default function LocationFinderWidget({
   nearestCenter,
   locLoading,
   onFindNearest,
 }) {
-
   return (
     <div className="bg-linear-to-br from-[#1A1F25] to-[#303841] rounded-4xl p-6 flex flex-col justify-between border border-white/10 shadow-2xl group relative overflow-hidden hover:scale-[1.02] duration-300">
       <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#F6C90E] opacity-5 blur-3xl group-hover:opacity-15 transition-opacity duration-500" />

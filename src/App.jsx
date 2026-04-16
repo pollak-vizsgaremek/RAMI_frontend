@@ -1,11 +1,9 @@
-import './App.css'
-import React from 'react'
-import ResponsiveAppBar from './components/Navbar'
+import "./App.css";
+import React from "react";
+import ResponsiveAppBar from "./components/common/Navbar.jsx";
 
 function App() {
-  return (
-    <ResponsiveAppBar />
-  )
+  return <ResponsiveAppBar />;
 }
 
-export default App
+export default App;

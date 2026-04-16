@@ -1,12 +1,15 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Outlet } from "react-router-dom"; // Use react-router-dom for web
-import Navbar from "../components/Navbar"; // Import the Navbar we built
+import Navbar from "./Navbar.jsx"; // Import the Navbar we built
 import axios from "axios";
 import { toast } from "react-toastify";
 
 // Lazy load your modals so they don't slow down the initial page load
-const LoginPage = lazy(() => import("../pages/Login.jsx"));
-const RegisterPage = lazy(() => import("../pages/Register.jsx"));
+const LoginPage = lazy(() => import("../../pages/public/Login.jsx"));
+const RegisterPage = lazy(() => import("../../pages/public/Register.jsx"));
+const ResetPasswordPage = lazy(
+  () => import("../../pages/public/ResetPassword.jsx"),
+);
 
 export default function Layout() {
   // --- 1. Search Bar State ---
@@ -18,6 +21,7 @@ export default function Layout() {
   // --- 2. Authentication Modal State ---
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
   // --- 3. The Backend Search Logic ---
   useEffect(() => {
@@ -100,6 +104,15 @@ export default function Layout() {
             onSwitchToLogin={() => {
               setShowRegister(false);
               setShowLogin(true);
+            }}
+          />
+        )}
+        {showResetPassword && (
+          <ResetPasswordPage
+            onClose={() => setShowResetPassword(false)}
+            onSwitchToForgotPassword={() => {
+              setShowResetPassword(false);
+              // You can navigate to forgot password or just close the modal
             }}
           />
         )}

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import LocationFinderWidget from "./widgets/LocationFinderWidget";
-import ReviewWidget from "./widgets/ReviewWidget";
-import OnlineStatusWidget from "./widgets/OnlineStatusWidget";
-import StatisticsWidget from "./widgets/StatisticsWidget";
-import PopularCitiesWidget from "./widgets/PopularCitiesWidget";
-import RatingWidget from "./widgets/RatingWidget";
-import BrowseInstructorsWidget from "./widgets/BrowseInstructorsWidget";
-import QuickActionsWidget from "./widgets/QuickActionsWidget";
-import WeatherWidget from "./widgets/WeatherWidget";
-import TopInstructor from "./widgets/TopInstructor";
-import TipsAndTricksWidget from "./widgets/TipsAndTricksWidget";
-import { EXAM_CENTERS } from "./widgets/constants";
+import LocationFinderWidget from "../widgets/LocationFinderWidget.jsx";
+import ReviewWidget from "../widgets/ReviewWidget.jsx";
+import OnlineStatusWidget from "../widgets/OnlineStatusWidget.jsx";
+import StatisticsWidget from "../widgets/StatisticsWidget.jsx";
+import PopularCitiesWidget from "../widgets/PopularCitiesWidget.jsx";
+import RatingWidget from "../widgets/RatingWidget.jsx";
+import BrowseInstructorsWidget from "../widgets/BrowseInstructorsWidget.jsx";
+import QuickActionsWidget from "../widgets/QuickActionsWidget.jsx";
+import WeatherWidget from "../widgets/WeatherWidget.jsx";
+import TopInstructor from "../widgets/topInstructor.jsx";
+import TipsAndTricksWidget from "../widgets/TipsAndTricksWidget.jsx";
+import { EXAM_CENTERS } from "../widgets/widgetConstants.js";
 
 export default function DiscoveryGrid() {
   const [index, setIndex] = useState(0);

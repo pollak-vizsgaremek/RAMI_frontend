@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import logo from "../assets/images/RAMI_logo.png";
+import logo from "../../assets/images/RAMI_logo.png";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";

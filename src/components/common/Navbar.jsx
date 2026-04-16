@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/images/RAMI_logo.png";
-import { Search, User, Users, Star, LogOut, MapPin } from "lucide-react";
+import logo from "../../assets/images/RAMI_logo.png";
+import {
+  Search,
+  User,
+  Users,
+  Star,
+  LogOut,
+  MapPin,
+  Settings,
+} from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = ({
@@ -17,6 +25,7 @@ const Navbar = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [userName, setUserName] = useState("Felhasználó");
+  const [userRole, setUserRole] = useState(null);
 
   const menuRef = useRef(null);
   const searchRef = useRef(null);
@@ -25,7 +34,9 @@ const Navbar = ({
   const checkAuth = () => {
     // JAVÍTVA: Csak sessionStorage-ből olvasunk!
     const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("userRole");
     setIsLoggedIn(!!token);
+    setUserRole(role);
     if (token) {
       const savedName =
         sessionStorage.getItem("userName") ||
@@ -198,6 +209,17 @@ const Navbar = ({
                       <Star size={18} className="mr-3 text-gray-400" />{" "}
                       Értékeléseim
                     </button>
+                    {userRole === "creator" && (
+                      <>
+                        <div className="h-px bg-gray-100 my-1"></div>
+                        <Link
+                          to="/admin"
+                          className="flex items-center w-full px-4 py-3 text-sm font-semibold text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
+                          onClick={() => setIsMenuOpen(false)}>
+                          <Settings size={18} className="mr-3" /> Admin Panel
+                        </Link>
+                      </>
+                    )}
                     <div className="h-px bg-gray-100 my-1"></div>
                     <button
                       onClick={handleLogout}

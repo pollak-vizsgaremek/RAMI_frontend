@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import logo from "../assets/images/RAMI_logo.png";
+import logo from "../../assets/images/RAMI_logo.png";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
