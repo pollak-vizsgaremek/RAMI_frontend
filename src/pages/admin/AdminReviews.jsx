@@ -1,34 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   CheckCircle,
   XCircle,
   Trash2,
   Eye,
-  MessageSquare,
+  FileText,
 } from "lucide-react";
 import {
   getReviewsList,
   approveReview,
   rejectReview,
   deleteReview,
-} from "../services/api/adminService";
+} from "../../services/api/adminService.js";
 import { toast } from "react-toastify";
 
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all"); // all, pending, approved, rejected
+  const [filterStatus, setFilterStatus] = useState("all");
   const [selectedReview, setSelectedReview] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState("view"); // view, reject
+  const [modalMode, setModalMode] = useState("view");
 
-  useEffect(() => {
-    fetchReviews();
-  }, [filterStatus]);
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getReviewsList({
@@ -40,39 +36,42 @@ const AdminReviews = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleApprove = async (reviewId) => {
     try {
       await approveReview(reviewId);
-      toast.success("Review approved successfully");
+      toast.success("Értékelés jóváhagyva");
       fetchReviews();
     } catch (error) {
-      toast.error(error.message || "Failed to approve review");
+      toast.error(error.message || "Hiba a jóváhagyás során");
     }
   };
 
   const handleReject = async (reason) => {
     try {
       await rejectReview(selectedReview._id, reason);
-      toast.success("Review rejected successfully");
+      toast.success("Értékelés elutasítva");
       setShowModal(false);
       fetchReviews();
     } catch (error) {
-      toast.error(error.message || "Failed to reject review");
+      toast.error(error.message || "Hiba az elutasítás során");
     }
   };
 
   const handleDelete = async (reviewId) => {
-    if (!window.confirm("Are you sure you want to delete this review?")) {
+    if (!window.confirm("Biztosan törölni szeretnéd ezt az értékelést?"))
       return;
-    }
     try {
       await deleteReview(reviewId);
-      toast.success("Review deleted successfully");
+      toast.success("Értékelés törölve");
       fetchReviews();
     } catch (error) {
-      toast.error(error.message || "Failed to delete review");
+      toast.error(error.message || "Hiba a törlés során");
     }
   };
 
@@ -83,265 +82,255 @@ const AdminReviews = () => {
       review.comment?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const getStatusBadge = (status) => {
-    const badges = {
-      approved: {
-        bg: "bg-green-100",
-        text: "text-green-800",
-        label: "Approved",
-      },
-      pending: {
-        bg: "bg-yellow-100",
-        text: "text-yellow-800",
-        label: "Pending",
-      },
-      rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
-    };
-    const badge = badges[status] || badges.pending;
-    return (
-      <span
-        className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}`}>
-        {badge.label}
-      </span>
-    );
-  };
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F6C90E]"></div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-16 h-16 border-4 border-[#F6C90E] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Reviews Moderation</h1>
-        <p className="text-gray-600 mt-1">
-          Review and moderate instructor reviews before they go live.
-        </p>
-      </div>
+      {/* Header Bento */}
+      <div className="bg-slate-900 rounded-[32px] p-8 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[100px] opacity-10"></div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-14 h-14 bg-white/10 text-white backdrop-blur-md rounded-2xl flex items-center justify-center">
+            <FileText size={28} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black text-white">Értékelések</h1>
+            <p className="text-slate-400 font-medium">
+              Moderálás és közzététel
+            </p>
+          </div>
+        </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto relative z-10">
+          <div className="relative flex-1 sm:w-64">
             <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"
               size={20}
             />
             <input
               type="text"
-              placeholder="Search by instructor, author, or content..."
+              placeholder="Keresés tartalomban..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F6C90E]"
+              className="w-full pl-12 pr-4 py-3 bg-white/10 text-white placeholder-slate-400 border-none rounded-2xl font-medium focus:ring-2 focus:ring-[#F6C90E] backdrop-blur-sm"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F6C90E]">
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending Review</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            className="px-4 py-3 bg-white/10 text-white border-none rounded-2xl font-bold focus:ring-2 focus:ring-[#F6C90E] cursor-pointer appearance-none backdrop-blur-sm">
+            <option value="all" className="text-slate-900">
+              Összes
+            </option>
+            <option value="pending" className="text-slate-900">
+              Függőben
+            </option>
+            <option value="approved" className="text-slate-900">
+              Jóváhagyva
+            </option>
+            <option value="rejected" className="text-slate-900">
+              Elutasítva
+            </option>
           </select>
         </div>
       </div>
 
-      {/* Reviews Cards */}
-      <div className="space-y-4">
+      {/* Reviews List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (
             <div
               key={review._id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+              className="bg-white rounded-[32px] p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {review.instructorName || "Unknown Instructor"}
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">
+                    {review.instructorName || "Ismeretlen Oktató"}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    by {review.authorName || "Anonymous"}
+                  <p className="text-sm font-medium text-slate-400">
+                    Írta: {review.authorName || "Anonymus"}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  {getStatusBadge(review.status || "pending")}
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                    ★ {review.rating || 0}/5
+                <div className="bg-[#F6C90E] px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-sm">
+                  <span className="font-black text-slate-900">
+                    {review.rating || 0}
                   </span>
+                  <Star size={14} className="text-slate-900 fill-current" />
                 </div>
               </div>
 
-              <p className="text-gray-700 mb-4 line-clamp-2">
-                {review.comment || "No comment provided"}
-              </p>
-
-              <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
-                <span>{new Date(review.createdAt).toLocaleDateString()}</span>
-                {review.flagged && (
-                  <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-semibold">
-                    ⚠️ Flagged
-                  </span>
-                )}
+              <div className="bg-slate-50 p-4 rounded-2xl mb-4 flex-1">
+                <p className="text-slate-700 italic line-clamp-3">
+                  "{review.comment || "Nincs szöveges értékelés"}"
+                </p>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setSelectedReview(review);
-                    setModalMode("view");
-                    setShowModal(true);
-                  }}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition inline-block border border-blue-200">
-                  <Eye size={18} />
-                </button>
-                {review.status !== "approved" && (
-                  <button
-                    onClick={() => handleApprove(review._id)}
-                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition inline-block border border-green-200">
-                    <CheckCircle size={18} />
-                  </button>
-                )}
-                {review.status !== "rejected" && (
+              <div className="flex items-center justify-between mt-auto">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`w-3 h-3 rounded-full ${
+                      review.status === "approved"
+                        ? "bg-green-500"
+                        : review.status === "rejected"
+                          ? "bg-red-500"
+                          : "bg-yellow-400 animate-pulse"
+                    }`}></span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">
+                    {review.status === "approved"
+                      ? "Jóváhagyva"
+                      : review.status === "rejected"
+                        ? "Elutasítva"
+                        : "Függőben"}
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
                   <button
                     onClick={() => {
                       setSelectedReview(review);
-                      setModalMode("reject");
+                      setModalMode("view");
                       setShowModal(true);
                     }}
-                    className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition inline-block border border-orange-200">
-                    <XCircle size={18} />
+                    className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors">
+                    <Eye size={18} />
                   </button>
-                )}
-                <button
-                  onClick={() => handleDelete(review._id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition inline-block border border-red-200">
-                  <Trash2 size={18} />
-                </button>
+                  {review.status !== "approved" && (
+                    <button
+                      onClick={() => handleApprove(review._id)}
+                      className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white transition-colors">
+                      <CheckCircle size={18} />
+                    </button>
+                  )}
+                  {review.status !== "rejected" && (
+                    <button
+                      onClick={() => {
+                        setSelectedReview(review);
+                        setModalMode("reject");
+                        setShowModal(true);
+                      }}
+                      className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors">
+                      <XCircle size={18} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(review._id)}
+                    className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors">
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center text-gray-500">
-            <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
-            No reviews found
+          <div className="col-span-full bg-white rounded-[32px] p-12 text-center shadow-sm">
+            <FileText size={48} className="mx-auto mb-4 text-slate-200" />
+            <p className="text-slate-500 font-medium text-lg">
+              Nincs értékelés
+            </p>
           </div>
         )}
       </div>
 
       {/* Modal */}
       {showModal && selectedReview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto p-6">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[32px] shadow-2xl max-w-lg w-full p-8 transform transition-all">
             {modalMode === "view" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Review Details
-                </h2>
-                <div className="space-y-4 mb-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600">
-                        Instructor
-                      </label>
-                      <p className="mt-1 text-gray-900">
-                        {selectedReview.instructorName || "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600">
-                        Author
-                      </label>
-                      <p className="mt-1 text-gray-900">
-                        {selectedReview.authorName || "Anonymous"}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600">
-                        Rating
-                      </label>
-                      <p className="mt-1 text-gray-900">
-                        ★ {selectedReview.rating || 0}/5
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600">
-                        Date
-                      </label>
-                      <p className="mt-1 text-gray-900">
-                        {new Date(
-                          selectedReview.createdAt,
-                        ).toLocaleDateString()}
-                      </p>
-                    </div>
+                <div className="flex justify-between items-start mb-6">
+                  <h2 className="text-2xl font-black text-slate-900">
+                    Értékelés Részletei
+                  </h2>
+                  <div className="bg-[#F6C90E] px-4 py-2 rounded-xl flex items-center gap-1">
+                    <span className="font-black text-slate-900">
+                      {selectedReview.rating || 0}
+                    </span>
+                    <Star size={16} className="text-slate-900 fill-current" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600">
-                      Review
-                    </label>
-                    <p className="mt-1 text-gray-700 p-3 bg-gray-50 rounded">
-                      {selectedReview.comment || "No comment"}
-                    </p>
-                  </div>
-                  {selectedReview.flagged && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded">
-                      <p className="text-sm text-red-700">
-                        <strong>Flagged Reason:</strong>{" "}
-                        {selectedReview.flagReason || "Content violation"}
-                      </p>
-                    </div>
-                  )}
                 </div>
+
+                <div className="bg-slate-50 p-6 rounded-2xl mb-6 space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-bold text-slate-400 uppercase">
+                      Oktató
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {selectedReview.instructorName || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-bold text-slate-400 uppercase">
+                      Írta
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {selectedReview.authorName || "Anonymus"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-bold text-slate-400 uppercase">
+                      Dátum
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {new Date(selectedReview.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <span className="block text-sm font-bold text-slate-400 uppercase mb-2 ml-1">
+                    Szöveg
+                  </span>
+                  <p className="bg-slate-100 p-6 rounded-2xl text-slate-700 italic">
+                    "{selectedReview.comment || "Nincs komment"}"
+                  </p>
+                </div>
+
                 <button
                   onClick={() => setShowModal(false)}
-                  className="w-full px-4 py-2 bg-[#F6C90E] text-black font-semibold rounded-lg hover:bg-[#E6B90D] transition">
-                  Close
+                  className="w-full px-4 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-colors shadow-lg">
+                  Bezárás
                 </button>
               </>
             )}
 
             {modalMode === "reject" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Reject Review
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Are you sure you want to reject this review?
-                </p>
-                <div className="bg-gray-50 p-3 rounded mb-4 max-h-24 overflow-y-auto">
-                  <p className="text-sm text-gray-700">
-                    {selectedReview.comment}
-                  </p>
+                <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-6">
+                  <XCircle size={32} />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-600 mb-2">
-                    Reason for rejection
+                <h2 className="text-2xl font-black text-slate-900 mb-2">
+                  Értékelés Elutasítása
+                </h2>
+                <div className="mb-6">
+                  <label className="block text-sm font-bold text-slate-500 ml-1 mb-2">
+                    Indoklás (opcionális)
                   </label>
                   <textarea
-                    placeholder="e.g., Inappropriate language, Off-topic, Spam..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F6C90E]"
-                    rows="3"
                     id="rejectReason"
-                  />
+                    placeholder="Írd le az okot..."
+                    rows="4"
+                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl font-medium focus:ring-2 focus:ring-orange-500 resize-none"></textarea>
                 </div>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
-                    Cancel
+                    className="flex-1 px-4 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-colors">
+                    Mégse
                   </button>
                   <button
-                    onClick={() => {
-                      const reason =
-                        document.getElementById("rejectReason").value;
-                      handleReject(reason);
-                    }}
-                    className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
-                    Reject Review
+                    onClick={() =>
+                      handleReject(
+                        document.getElementById("rejectReason").value,
+                      )
+                    }
+                    className="flex-1 px-4 py-4 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30">
+                    Elutasítás
                   </button>
                 </div>
               </>
@@ -352,5 +341,22 @@ const AdminReviews = () => {
     </div>
   );
 };
+
+// Mock Star icon for reviews component since it wasn't in the import list originally
+const Star = ({ size, className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+);
 
 export default AdminReviews;

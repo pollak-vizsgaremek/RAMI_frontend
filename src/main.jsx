@@ -1,4 +1,4 @@
-import { lazy, StrictMode, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/global.css";
 import { BrowserRouter, Routes, Route } from "react-router";
@@ -39,68 +39,61 @@ const AdminInstructors = lazy(
 const AdminReviews = lazy(() => import("./pages/admin/AdminReviews.jsx"));
 const AdminReports = lazy(() => import("./pages/admin/AdminReports.jsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.jsx"));
-const AdminCodes = lazy(() => import("./pages/admin/AdminCodes.jsx"));
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center min-h-screen">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F6C90E]"></div>
-            </div>
-          }>
-          <Routes>
-            {/* Public Routes */}
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/instructor/:id" element={<InstructorProfile />} />
-              <Route
-                path="/browse-instructors"
-                element={<BrowseInstructors />}
-              />
-              <Route path="/instructor-search" element={<InstructorSearch />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/user-profile" element={<UserProfile />} />
-              <Route path="/review" element={<Review />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-            </Route>
+  <AuthProvider>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F6C90E]"></div>
+          </div>
+        }>
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/instructor/:id" element={<InstructorProfile />} />
+            <Route path="/browse-instructors" element={<BrowseInstructors />} />
+            <Route path="/instructor-search" element={<InstructorSearch />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+          </Route>
 
-            {/* Admin Registration (Standalone) */}
-            <Route path="/admin/register" element={<AdminRegister />} />
+          {/* Admin Registration (Standalone) */}
+          <Route path="/admin/register" element={<AdminRegister />} />
 
-            {/* Admin Landing Page (Protected) */}
-            <Route
-              path="/admin"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLanding />
-                </AdminProtectedRoute>
-              }
-            />
+          {/* Admin Landing Page (Protected) */}
+          <Route
+            path="/admin"
+            element={
+              <AdminProtectedRoute>
+                <AdminLanding />
+              </AdminProtectedRoute>
+            }
+          />
 
-            {/* Admin Routes with Layout (Protected) */}
-            <Route
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout />
-                </AdminProtectedRoute>
-              }>
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/instructors" element={<AdminInstructors />} />
-              <Route path="/admin/reviews" element={<AdminReviews />} />
-              <Route path="/admin/reports" element={<AdminReports />} />
-              <Route path="/admin/settings" element={<AdminSettings />} />
-              <Route path="/admin/codes" element={<AdminCodes />} />
-            </Route>
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </AuthProvider>
-  </StrictMode>,
+          {/* Admin Routes with Layout (Protected) */}
+          <Route
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout />
+              </AdminProtectedRoute>
+            }>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/instructors" element={<AdminInstructors />} />
+            <Route path="/admin/reviews" element={<AdminReviews />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  </AuthProvider>,
 );

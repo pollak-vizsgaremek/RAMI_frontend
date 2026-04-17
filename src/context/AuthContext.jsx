@@ -24,7 +24,22 @@ export function AuthProvider({ children }) {
       setIsLoggedIn(false);
     };
     window.addEventListener("auth:logout", handleForcedLogout);
-    return () => window.removeEventListener("auth:logout", handleForcedLogout);
+
+    // Also listen for manual auth changes (e.g., from login modal)
+    const handleAuthChange = () => {
+      const updatedUser = getStoredUser();
+      const token = getToken();
+      if (updatedUser && token) {
+        setUser(updatedUser);
+        setIsLoggedIn(true);
+      }
+    };
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("auth:logout", handleForcedLogout);
+      window.removeEventListener("authChange", handleAuthChange);
+    };
   }, []);
 
   // Called by Login.jsx and Register.jsx after a successful response:

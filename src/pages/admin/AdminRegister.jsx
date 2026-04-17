@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Shield, ArrowLeft, CheckCircle, AlertCircle, Eye, EyeOff } from "lucide-react";
-import toast from "react-toastify";
+import {
+  Shield,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function AdminRegister() {
   const navigate = useNavigate();
@@ -13,7 +20,7 @@ export default function AdminRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [codeData, setCodeData] = useState<any>(null);
+  const [codeData, setCodeData] = useState(null);
   const [formData, setFormData] = useState({
     code: registrationCode || "",
     email: "",
@@ -58,7 +65,7 @@ export default function AdminRegister() {
   };
 
   // Submit registration form
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
@@ -84,19 +91,22 @@ export default function AdminRegister() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3300/api/v1/auth/admin/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:3300/api/v1/auth/admin/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            confirmPassword: formData.confirmPassword,
+            name: formData.name,
+            registrationCode: formData.code,
+          }),
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          name: formData.name,
-          registrationCode: formData.code,
-        }),
-      });
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -105,7 +115,7 @@ export default function AdminRegister() {
       }
 
       const data = await response.json();
-      
+
       // Store token
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("userRole", data.user.role);
@@ -116,8 +126,12 @@ export default function AdminRegister() {
 
       // Redirect after 2 seconds
       setTimeout(() => {
-        if (data.user.role === "creator" || data.user.role === "admin" || data.user.role === "moderator") {
-          navigate("/admin");
+        if (
+          data.user.role === "creator" ||
+          data.user.role === "admin" ||
+          data.user.role === "moderator"
+        ) {
+          navigate("/");
         } else {
           navigate("/");
         }
@@ -131,7 +145,7 @@ export default function AdminRegister() {
   };
 
   // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -146,8 +160,7 @@ export default function AdminRegister() {
         {/* Back Button */}
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 mb-8 transition"
-        >
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 mb-8 transition">
           <ArrowLeft size={20} />
           <span>Vissza</span>
         </button>
@@ -157,14 +170,17 @@ export default function AdminRegister() {
           {/* Header */}
           <div className="flex items-center justify-center gap-3 mb-8">
             <Shield size={32} className="text-yellow-400" />
-            <h1 className="text-3xl font-bold text-white">Admin Regisztráció</h1>
+            <h1 className="text-3xl font-bold text-white">
+              Admin Regisztráció
+            </h1>
           </div>
 
           {/* Step 1: Code Validation */}
           {step === "code-validation" && (
             <div className="space-y-6">
               <p className="text-slate-300 text-center">
-                Az adminisztrátor jelölt egy regisztrációs kódot kapott az adminisztrátortól. Add meg a kódot az első lépéshez.
+                Az adminisztrátor jelölt egy regisztrációs kódot kapott az
+                adminisztrátortól. Add meg a kódot az első lépéshez.
               </p>
 
               <div>
@@ -183,9 +199,14 @@ export default function AdminRegister() {
 
               <div className="bg-slate-700 border border-slate-600 rounded-lg p-4">
                 <div className="flex gap-3">
-                  <AlertCircle size={20} className="text-yellow-400 flex-shrink-0 mt-1" />
+                  <AlertCircle
+                    size={20}
+                    className="text-yellow-400 flex-shrink-0 mt-1"
+                  />
                   <p className="text-sm text-slate-300">
-                    <strong>Fontos:</strong> A regisztrációs kód az adminisztrátortól kapható. A kód 24 óráig érvényes és csak egyszer használható fel.
+                    <strong>Fontos:</strong> A regisztrációs kód az
+                    adminisztrátortól kapható. A kód 24 óráig érvényes és csak
+                    egyszer használható fel.
                   </p>
                 </div>
               </div>
@@ -193,8 +214,7 @@ export default function AdminRegister() {
               <button
                 onClick={validateCode}
                 disabled={loading}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? "Ellenőrzés folyamatban..." : "Kód Ellenőrzése"}
               </button>
             </div>
@@ -263,8 +283,7 @@ export default function AdminRegister() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
-                  >
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200">
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
@@ -287,9 +306,12 @@ export default function AdminRegister() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
-                  >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200">
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -297,9 +319,13 @@ export default function AdminRegister() {
               {/* Security Notice */}
               <div className="bg-blue-900 border border-blue-700 rounded-lg p-3">
                 <div className="flex gap-2">
-                  <AlertCircle size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle
+                    size={16}
+                    className="text-blue-400 flex-shrink-0 mt-0.5"
+                  />
                   <p className="text-xs text-blue-200">
-                    Erős jelszó ajánlott. Tartalmazza a számokat és speciális karaktereket.
+                    Erős jelszó ajánlott. Tartalmazza a számokat és speciális
+                    karaktereket.
                   </p>
                 </div>
               </div>
@@ -308,9 +334,10 @@ export default function AdminRegister() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Regisztrálás folyamatban..." : "Admin Fiók Létrehozása"}
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+                {loading
+                  ? "Regisztrálás folyamatban..."
+                  : "Admin Fiók Létrehozása"}
               </button>
 
               {/* Back to Code */}
@@ -320,8 +347,7 @@ export default function AdminRegister() {
                   setStep("code-validation");
                   setCodeData(null);
                 }}
-                className="w-full text-slate-400 hover:text-slate-200 py-2 text-sm transition"
-              >
+                className="w-full text-slate-400 hover:text-slate-200 py-2 text-sm transition">
                 Vissza a kód beírásához
               </button>
             </form>
@@ -337,7 +363,8 @@ export default function AdminRegister() {
               <h2 className="text-2xl font-bold text-white">Gratulálunk!</h2>
 
               <p className="text-slate-300">
-                Az admin fiók sikeresen létrehozva! Bejelentkezésed az admin panelra fog történni.
+                Az admin fiók sikeresen létrehozva! Bejelentkezésed az admin
+                panelra fog történni.
               </p>
 
               <div className="bg-slate-700 border border-slate-600 rounded-lg p-4 mt-6">
@@ -366,8 +393,7 @@ export default function AdminRegister() {
           Nincs admin kódod?{" "}
           <button
             onClick={() => navigate("/")}
-            className="text-yellow-400 hover:text-yellow-300 transition"
-          >
+            className="text-yellow-400 hover:text-yellow-300 transition">
             Vissza a főoldalra
           </button>
         </p>

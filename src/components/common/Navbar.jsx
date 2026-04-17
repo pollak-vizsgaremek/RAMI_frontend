@@ -11,6 +11,10 @@ import {
   Settings,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+import {
+  getToken,
+  getStoredUser,
+} from "../../services/storage/storageService.js";
 
 const Navbar = ({
   onLoginClick,
@@ -32,17 +36,13 @@ const Navbar = ({
   const navigate = useNavigate();
 
   const checkAuth = () => {
-    // JAVÍTVA: Csak sessionStorage-ből olvasunk!
-    const token = sessionStorage.getItem("token");
-    const role = sessionStorage.getItem("userRole");
+    // Check using storageService which checks both localStorage and sessionStorage
+    const token = getToken();
+    const user = getStoredUser();
     setIsLoggedIn(!!token);
-    setUserRole(role);
-    if (token) {
-      const savedName =
-        sessionStorage.getItem("userName") ||
-        sessionStorage.getItem("userEmail") ||
-        "Felhasználó";
-      setUserName(savedName);
+    setUserRole(user?.role);
+    if (token && user) {
+      setUserName(user.name || user.email || "Felhasználó");
     }
   };
 
@@ -69,11 +69,15 @@ const Navbar = ({
     const confirmLogout = window.confirm("Biztosan ki szeretnél jelentkezni?");
     if (!confirmLogout) return;
 
-    // JAVÍTVA: A sessionStorage törlése
+    // Clear both sessionStorage and localStorage
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userId");
     sessionStorage.removeItem("userName");
     sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("userRole");
+
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
 
     setIsLoggedIn(false);
     setIsMenuOpen(false);
@@ -213,7 +217,7 @@ const Navbar = ({
                       <>
                         <div className="h-px bg-gray-100 my-1"></div>
                         <Link
-                          to="/admin"
+                          to="/admin/dashboard"
                           className="flex items-center w-full px-4 py-3 text-sm font-semibold text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
                           onClick={() => setIsMenuOpen(false)}>
                           <Settings size={18} className="mr-3" /> Admin Panel

@@ -9,7 +9,7 @@ import {
   FileText,
   AlertCircle,
   Settings,
-  Key,
+  Home,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 
@@ -44,11 +44,6 @@ const AdminLayout = () => {
       label: "Reports",
       icon: AlertCircle,
       path: "/admin/reports",
-    },
-    {
-      label: "Registration Codes",
-      icon: Key,
-      path: "/admin/codes",
     },
     {
       label: "Settings",
@@ -111,7 +106,14 @@ const AdminLayout = () => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-700">
+        <div className="p-4 border-t border-gray-700 space-y-2">
+          <Link
+            to="/"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-blue-400 hover:bg-blue-900/20 transition"
+            title={!sidebarOpen ? "Home" : ""}>
+            <Home size={20} />
+            {sidebarOpen && <span>Home</span>}
+          </Link>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/20 transition"

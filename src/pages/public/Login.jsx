@@ -33,15 +33,51 @@ export default function Login({ onClose, onSwitchToRegister }) {
         password,
       });
 
-      // JAVÍTVA: Szigorúan csak SessionStorage-be mentünk minden adatot!
-      sessionStorage.setItem("token", res.data.token);
-      sessionStorage.setItem("userId", res.data.userId);
-      sessionStorage.setItem("userName", res.data.name);
-      sessionStorage.setItem("userEmail", res.data.email);
+      // Log this to see exactly what the backend returns
+      console.log("Backend response data:", res.data);
 
-      // Set role based on login mode or user data
+      // Look for the user object (it might be nested inside res.data.user or res.data.data.user)
+      const userData = res.data.user || res.data.data?.user || res.data;
+
+      // Handle flexible response formats from backend
+      const userId = userData.userId || userData.id || userData._id;
+      const userName =
+        userData.name || userData.userName || email.split("@")[0];
+      const userEmail = userData.email || email;
+
+      // Look for the token (might be nested inside res.data.data)
+      const token =
+        res.data.token ||
+        res.data.accessToken ||
+        res.data.data?.token ||
+        res.data.data?.accessToken;
+
+      if (!userId || !token) {
+        console.error("Missing data. Full response was:", res.data);
+        throw new Error(
+          "Invalid response from server: Missing user ID or token",
+        );
+      }
+
+      // Store to both sessionStorage (for Navbar) and localStorage (for AuthContext)
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("userId", userId);
+      sessionStorage.setItem("userName", userName);
+      sessionStorage.setItem("userEmail", userEmail);
+
+      // Store to localStorage for AuthContext to pick up
+      localStorage.setItem("accessToken", token);
       const userRole = isAdminMode ? "creator" : res.data.role || "student";
       sessionStorage.setItem("userRole", userRole);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: userId,
+          name: userName,
+          email: userEmail,
+          role: userRole,
+        }),
+      );
 
       // Értesítjük a Navbart, hogy változás történt!
       window.dispatchEvent(new Event("authChange"));
@@ -53,16 +89,22 @@ export default function Login({ onClose, onSwitchToRegister }) {
         setLoading(false);
         if (onClose) onClose();
 
-        // Redirect admin users to admin panel
-        if (isAdminMode || userRole === "creator") {
-          navigate("/admin");
-        }
+        // Redirect to home page
+        navigate("/");
       }, 1500);
     } catch (error) {
       setLoading(false);
-      console.error(error);
+      console.error("Login error:", error);
+
+      // Log the full error response for debugging
+      if (error.response?.status === 401) {
+        console.error("Authentication failed:", error.response.data);
+      }
+
       const errorMessage =
-        error.response?.data?.message || "Hiba történt a bejelentkezés során.";
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Hiba történt a bejelentkezés során.";
       toast.error(errorMessage);
     }
   };

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
+import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
+import {
+  getToken,
+  getStoredUser,
+} from "../../services/storage/storageService.js";
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -12,27 +16,23 @@ export default function UserProfile() {
   const [loadingReviews, setLoadingReviews] = useState(true);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       toast.error("Kérlek, jelentkezz be a profilod megtekintéséhez.");
       navigate("/");
       return;
     }
 
-    const name = sessionStorage.getItem("userName") || "Ismeretlen Felhasználó";
-    const email = sessionStorage.getItem("userEmail") || "Nincs e-mail megadva";
-    const phone = sessionStorage.getItem("userPhone") || "Nincs megadva";
+    const user = getStoredUser();
+    const name = user?.name || "Ismeretlen Felhasználó";
+    const email = user?.email || "Nincs e-mail megadva";
+    const phone = user?.phone || "Nincs megadva";
     setUserData({ name, email, phone });
 
     const fetchMyReviews = async () => {
       try {
-        const userId = sessionStorage.getItem("userId");
-        const res = await axios.get(
-          `http://localhost:3300/api/v1/review/user/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const userId = user?.id;
+        const res = await api.get(`/review/user/${userId}`);
         setMyReviews(res.data);
       } catch (err) {
         console.error("Nem sikerült betölteni az értékeléseket:", err);
@@ -58,10 +58,7 @@ export default function UserProfile() {
     }
 
     try {
-      const token = sessionStorage.getItem("token");
-      await axios.delete(`http://localhost:3300/api/v1/review/${reviewId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/review/${reviewId}`);
 
       // Remove it from the screen instantly
       setMyReviews(myReviews.filter((review) => review._id !== reviewId));

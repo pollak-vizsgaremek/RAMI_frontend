@@ -18,7 +18,7 @@ import {
   Filter,
   Search,
 } from "lucide-react";
-import axios from "axios";
+import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
@@ -33,14 +33,12 @@ const AdminDashboard = () => {
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("week");
-  const API_URL = "http://localhost:3300";
+  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3300";
 
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
-      const token = sessionStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/api/v1/admin/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get(`/admin/dashboard`, {
         params: { period: selectedPeriod },
       });
 

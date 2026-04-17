@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import axios from "axios";
+import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
+import {
+  getToken,
+  getStoredUser,
+} from "../../services/storage/storageService.js";
 
 export default function InstructorProfile() {
   const { id } = useParams();
@@ -24,14 +28,10 @@ export default function InstructorProfile() {
 
     const fetchInstructorData = async () => {
       try {
-        const resInstructor = await axios.get(
-          `http://localhost:3300/api/v1/instructor/${id}`,
-        );
+        const resInstructor = await api.get(`/instructor/${id}`);
         setInstructor(resInstructor.data);
 
-        const resReviews = await axios.get(
-          `http://localhost:3300/api/v1/review/instructor/${id}`,
-        );
+        const resReviews = await api.get(`/review/instructor/${id}`);
         setReviews(resReviews.data);
       } catch (err) {
         setError("Nem sikerült betölteni az oktató adatait.", err);
@@ -73,22 +73,18 @@ export default function InstructorProfile() {
   };
 
   const handleReviewClick = () => {
-    if (!sessionStorage.getItem("token"))
-      return toast.warning("Jelentkezz be az értékeléshez!");
+    if (!getToken()) return toast.warning("Jelentkezz be az értékeléshez!");
     navigate(`/review?instructorId=${id}`);
   };
 
   const handleHelpfulClick = async (reviewId) => {
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
+    const token = getToken();
+    const user = getStoredUser();
+    const userId = user?.id;
     if (!token || !userId) return toast.warning("Jelentkezz be a kedveléshez!");
 
     try {
-      await axios.put(
-        `http://localhost:3300/api/v1/review/${reviewId}/helpful`,
-        { userId },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await api.put(`/review/${reviewId}/helpful`, { userId });
       setReviews(
         reviews.map((review) => {
           if (review._id === reviewId) {
@@ -368,7 +364,7 @@ export default function InstructorProfile() {
                     <div className="flex items-center gap-4 mt-2">
                       <button
                         onClick={() => handleHelpfulClick(review._id)}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${review.helpfulUsers?.includes(sessionStorage.getItem("userId")) ? "bg-[#F6C90E] text-black shadow-[0_0_10px_rgba(246,201,14,0.3)]" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}>
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${review.helpfulUsers?.includes(getStoredUser()?.id) ? "bg-[#F6C90E] text-black shadow-[0_0_10px_rgba(246,201,14,0.3)]" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}>
                         👍 Hasznos ({review.helpfulCount || 0})
                       </button>
                     </div>

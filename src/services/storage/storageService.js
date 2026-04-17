@@ -12,7 +12,9 @@ export const setToken = (token) => {
 };
 
 export const getToken = () => {
-  return localStorage.getItem(KEYS.ACCESS_TOKEN);
+  return (
+    localStorage.getItem(KEYS.ACCESS_TOKEN) || sessionStorage.getItem("token")
+  );
 };
 
 export const clearToken = () => {
@@ -26,8 +28,33 @@ export const setStoredUser = (user) => {
 };
 
 export const getStoredUser = () => {
-  const user = localStorage.getItem(KEYS.USER);
-  return user ? JSON.parse(user) : null;
+  try {
+    const user = localStorage.getItem(KEYS.USER);
+    if (user) return JSON.parse(user);
+  } catch (e) {
+    console.error("Error parsing stored user from localStorage:", e);
+  }
+
+  // Fallback: check sessionStorage and construct user object from it
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    const userId = sessionStorage.getItem("userId");
+    const userName = sessionStorage.getItem("userName");
+    const userEmail = sessionStorage.getItem("userEmail");
+    const userRole = sessionStorage.getItem("userRole") || "student";
+
+    // Only return if we have at least a userId
+    if (userId) {
+      return {
+        id: userId,
+        name: userName || userEmail || "User",
+        email: userEmail || "",
+        role: userRole,
+      };
+    }
+  } // <-- This closing brace was missing
+
+  return null;
 };
 
 export const clearStoredUser = () => {
