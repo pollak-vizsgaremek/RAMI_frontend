@@ -15,6 +15,7 @@ const BrowseInstructors = lazy(
 const Leaderboard = lazy(() => import("./pages/public/Leaderboard.jsx"));
 const Login = lazy(() => import("./pages/public/Login.jsx"));
 const Register = lazy(() => import("./pages/public/Register.jsx"));
+const RegisterInstructor = lazy(() => import("./pages/public/RegisterInstructor.jsx"));
 const Review = lazy(() => import("./pages/public/Review.jsx"));
 const ForgotPassword = lazy(() => import("./pages/public/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/public/ResetPassword.jsx"));
@@ -61,6 +62,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/review" element={<Review />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register-instructor" element={<RegisterInstructor />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
           </Route>

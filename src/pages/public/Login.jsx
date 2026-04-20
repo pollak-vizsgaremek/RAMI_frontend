@@ -106,6 +106,17 @@ export default function Login({ onClose, onSwitchToRegister }) {
         error.response?.data?.error ||
         "Hiba történt a bejelentkezés során.";
       toast.error(errorMessage);
+      // Ha hitelesítési hiba (például rossz jelszó), kérdezzük meg a felhasználót,
+      // hogy szeretne-e jelszó-visszaállítást kérni.
+      if (error.response?.status === 401) {
+        const goToReset = window.confirm(
+          "Bejelentkezés sikertelen. Elfelejtetted a jelszavad? Szeretnél jelszó-visszaállítást kérni?",
+        );
+        if (goToReset) {
+          if (onClose) onClose();
+          navigate("/forgot-password");
+        }
+      }
     }
   };
 
@@ -228,11 +239,15 @@ export default function Login({ onClose, onSwitchToRegister }) {
           {!isAdminMode && (
             <>
               <div className="flex justify-between items-center text-xs mt-4">
-                <Link
-                  to="/forgot-password"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onClose) onClose();
+                    navigate("/forgot-password");
+                  }}
                   className="text-yellow-600 font-bold hover:underline">
                   Elfelejtetted a jelszavad?
-                </Link>
+                </button>
               </div>
               <p className="text-center text-sm text-gray-500 mt-6">
                 Új vagy még?{" "}

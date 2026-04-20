@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import logo from "../../assets/images/RAMI_logo.png";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -154,6 +155,7 @@ export default function Register({ onClose, onSwitchToLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const {
     emailStatus,
@@ -347,15 +349,27 @@ export default function Register({ onClose, onSwitchToLogin }) {
             {isSubmitting ? "Kérlek várj..." : "Regisztráció"}
           </button>
 
-          <p className="text-center text-sm text-gray-500">
-            Van már fiókod?{" "}
+          <div className="flex flex-col items-center space-y-2 mt-3">
+            <p className="text-center text-sm text-gray-500">
+              Van már fiókod?{" "}
+              <button
+                type="button"
+                onClick={onSwitchToLogin}
+                className="text-yellow-600 font-bold hover:underline cursor-pointer">
+                Jelentkezz be
+              </button>
+            </p>
+
             <button
               type="button"
-              onClick={onSwitchToLogin}
-              className="text-yellow-600 font-bold hover:underline cursor-pointer">
-              Jelentkezz be
+              onClick={() => {
+                if (onClose) onClose();
+                navigate("/register-instructor");
+              }}
+              className="text-sm text-[#F6C90E] font-semibold hover:underline">
+              Oktatóként szeretnék jelentkezni
             </button>
-          </p>
+          </div>
         </form>
       </div>
     </div>
