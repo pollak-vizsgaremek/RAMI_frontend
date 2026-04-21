@@ -6,10 +6,12 @@ import {
   getToken,
   getStoredUser,
 } from "../../services/storage/storageService.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 export default function Review() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isLoggedIn } = useAuth();
 
   const queryParams = new URLSearchParams(location.search);
   const preselectedInstructorId = queryParams.get("instructorId") || "";
@@ -32,6 +34,19 @@ export default function Review() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  const getOktatok = () => {
+    if (!isLoggedIn || !user?.id) return;
+    api
+      .get(`/user/${user.id}/instructor`)
+      .then((res) => {
+        setOktatok(res.data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch user instructors:", err);
+        setOktatok([]);
+      });
+  };
+
   useEffect(() => {
     const token = getToken();
     if (!token) {
@@ -40,22 +55,21 @@ export default function Review() {
     }
   }, [navigate]);
 
-  function getOktatok() {
-    api
-      .get("/instructor/")
-      .then((res) => {
-        setOktatok(res.data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch instructors:", err);
-      });
-  }
-
   useEffect(() => {
-    getOktatok();
+    if (user?.id) {
+      api
+        .get(`/user/${user.id}/instructor`)
+        .then((res) => {
+          setOktatok(res.data || []);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch user instructors:", err);
+          setOktatok([]);
+        });
+    }
     const timer = setTimeout(() => setIsVisible(true), 50);
     return () => clearTimeout(timer);
-  }, []);
+  }, [user?.id]);
 
   const resetRatings = () => {
     setTurelem(0);

@@ -52,8 +52,16 @@ export default function BrowseInstructors() {
             Találd meg a számodra legmegfelelőbb autósoktatót!
           </p>
         </div>
-        <div className="bg-[#F6C90E]/20 text-[#F6C90E] px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase border border-[#F6C90E]/20 shadow-lg">
-          {filteredInstructors.length} találat
+        <div className="flex items-center gap-3">
+          <div className="bg-[#F6C90E]/20 text-[#F6C90E] px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase border border-[#F6C90E]/20 shadow-lg">
+            {filteredInstructors.length} találat
+          </div>
+          <button
+            onClick={() => navigate("/register-school")}
+            className="px-4 py-2 bg-[#F6C90E] text-black rounded-xl font-bold hover:opacity-90 transition-colors"
+          >
+            Iskola regisztráció
+          </button>
         </div>
       </div>
 

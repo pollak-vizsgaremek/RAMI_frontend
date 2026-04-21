@@ -360,15 +360,27 @@ export default function Register({ onClose, onSwitchToLogin }) {
               </button>
             </p>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (onClose) onClose();
-                navigate("/register-instructor");
-              }}
-              className="text-sm text-[#F6C90E] font-semibold hover:underline">
-              Oktatóként szeretnék jelentkezni
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onClose) onClose();
+                  navigate("/register-instructor");
+                }}
+                className="text-sm text-[#F6C90E] font-semibold hover:underline">
+                Oktatóként szeretnék jelentkezni
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onClose) onClose();
+                  navigate("/register-school");
+                }}
+                className="text-sm text-[#F6C90E] font-semibold hover:underline">
+                Iskola regisztráció
+              </button>
+            </div>
           </div>
         </form>
       </div>

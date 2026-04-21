@@ -6,10 +6,12 @@ import {
   getToken,
   getStoredUser,
 } from "../../services/storage/storageService.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 export default function InstructorProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
 
   const [instructor, setInstructor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,6 +20,9 @@ export default function InstructorProfile() {
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
+  const [userInstructors, setUserInstructors] = useState([]);
+  const [nominationStatus, setNominationStatus] = useState(null);
+  const [nominatingLoading, setNominatingLoading] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -42,6 +47,24 @@ export default function InstructorProfile() {
     };
     fetchInstructorData();
   }, [id]);
+
+  useEffect(() => {
+    if (isLoggedIn && user?.id) {
+      const fetchUserInstructors = async () => {
+        try {
+          const res = await api.get(`/user/${user.id}/instructor`);
+          const instructorIds = res.data.map((inst) => inst._id || inst.id);
+          setUserInstructors(instructorIds);
+          if (instructorIds.includes(id)) {
+            setNominationStatus('confirmed');
+          }
+        } catch (err) {
+          console.error("Failed to fetch user instructors:", err);
+        }
+      };
+      fetchUserInstructors();
+    }
+  }, [isLoggedIn, user?.id, id]);
 
   useEffect(() => {
     if (!loading && !error && instructor) {
@@ -77,10 +100,28 @@ export default function InstructorProfile() {
     navigate(`/review?instructorId=${id}`);
   };
 
+  const handleNominateClick = async () => {
+    if (!isLoggedIn || !user?.id) {
+      toast.warning("Jelentkezz be a jelöléshez!");
+      return;
+    }
+
+    setNominatingLoading(true);
+    try {
+      await api.post(`/instructor/${id}/nominate`, { userId: user.id });
+      setNominationStatus('pending');
+      toast.success("Sikeres jelölés! Az oktató jelölésed függőben van.");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Hiba a jelölés során.");
+    } finally {
+      setNominatingLoading(false);
+    }
+  };
+
   const handleHelpfulClick = async (reviewId) => {
     const token = getToken();
-    const user = getStoredUser();
-    const userId = user?.id;
+    const storedUser = getStoredUser();
+    const userId = storedUser?.id;
     if (!token || !userId) return toast.warning("Jelentkezz be a kedveléshez!");
 
     try {
@@ -250,12 +291,26 @@ export default function InstructorProfile() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            {/* Megosztás button removed from here */}
-            <button
-              onClick={handleReviewClick}
-              className="whitespace-nowrap w-full md:w-auto bg-gray-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:bg-gray-600 active:scale-95 transition-all text-sm cursor-pointer">
-              Értékelés
-            </button>
+            {nominationStatus === 'confirmed' ? (
+              <button
+                onClick={handleReviewClick}
+                className="whitespace-nowrap w-full md:w-auto bg-gray-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:bg-gray-600 active:scale-95 transition-all text-sm cursor-pointer">
+                Értékelés
+              </button>
+            ) : nominationStatus === 'pending' ? (
+              <button
+                disabled
+                className="whitespace-nowrap w-full md:w-auto bg-gray-600 text-gray-400 px-8 py-4 rounded-2xl font-black uppercase tracking-wide text-sm cursor-not-allowed opacity-60">
+                Függő jelölés
+              </button>
+            ) : (
+              <button
+                onClick={handleNominateClick}
+                disabled={nominatingLoading}
+                className="whitespace-nowrap w-full md:w-auto bg-gray-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:bg-gray-600 active:scale-95 transition-all text-sm cursor-pointer disabled:opacity-60">
+                {nominatingLoading ? "Jelölés..." : "Jelölés"}
+              </button>
+            )}
             <button className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all text-sm cursor-pointer shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40">
               Kapcsolat
             </button>

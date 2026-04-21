@@ -19,6 +19,7 @@ const RegisterInstructor = lazy(() => import("./pages/public/RegisterInstructor.
 const Review = lazy(() => import("./pages/public/Review.jsx"));
 const ForgotPassword = lazy(() => import("./pages/public/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/public/ResetPassword.jsx"));
+const RegisterSchool = lazy(() => import("./pages/public/RegisterSchool.jsx"));
 
 // Instructor Pages
 const InstructorProfile = lazy(
@@ -63,6 +64,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register-instructor" element={<RegisterInstructor />} />
+            <Route path="/register-school" element={<RegisterSchool />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
           </Route>

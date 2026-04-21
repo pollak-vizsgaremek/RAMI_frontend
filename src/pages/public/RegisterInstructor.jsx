@@ -14,7 +14,6 @@ export default function RegisterInstructor({ onClose }) {
   const [selectedSchool, setSelectedSchool] = useState("");
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState("");
-  const [categoriesRaw, setCategoriesRaw] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [city, setCity] = useState("");
   const [experience, setExperience] = useState("");
@@ -38,7 +37,6 @@ export default function RegisterInstructor({ onClose }) {
     const fetchCategories = async () => {
       try {
         const res = await api.get("/categories/");
-        console.log("categories raw response:", res);
         const data = res.data;
 
         // helper: find first array anywhere in the response object
@@ -62,11 +60,7 @@ export default function RegisterInstructor({ onClose }) {
         };
 
         const arr = findFirstArray(data);
-        try {
-          setCategoriesRaw(JSON.stringify(data, null, 2));
-        } catch (e) {
-          setCategoriesRaw(String(data));
-        }
+        // normalize response into an array if possible
         if (Array.isArray(arr)) {
           setCategories(arr);
         } else {
@@ -207,12 +201,10 @@ export default function RegisterInstructor({ onClose }) {
 
             <div>
               <label className="block text-gray-300 mb-2">Kategóriák (pipáld ki, melyeket oktatsz)</label>
-              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-auto pr-2">
+              <div className="grid grid-cols-2 gap-2 pr-2">
                 {categories.length === 0 && !categoriesError && <div className="text-gray-400">Kategóriák betöltése...</div>}
                 {categoriesError && <div className="text-red-400">{categoriesError}</div>}
-                {categoriesRaw && (
-                  <pre className="text-xs text-gray-400 col-span-2 bg-gray-900 p-2 rounded overflow-auto">{categoriesRaw}</pre>
-                )}
+                {/* removed raw debug output */}
                 {categories.map((c) => {
                   const id = c && typeof c === 'object' ? (c.id || c._id || c.value || c.key) : c;
                   const label = c && typeof c === 'object' ? (c.name || c.label || String(c)) : c;
