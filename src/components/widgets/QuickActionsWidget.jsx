@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BookOpen, Phone, Download, Newspaper, ChevronUp, ChevronDown } from "lucide-react"; // Removed unused User
+import { BookOpen, AlertCircle, Download, Newspaper, ChevronUp, ChevronDown } from "lucide-react"; // Removed unused User
 import { Link } from "react-router-dom"; // Assuming you meant react-router-dom
 
 const actions = [
@@ -20,16 +20,16 @@ const actions = [
   {
     icon: Newspaper,
     label: "Hírek",
-    color: "text-red-400",
-    bg: "bg-white/5 hover:bg-red-400 hover:text-black",
+    color: "text-orange-400",
+    bg: "bg-white/5 hover:bg-orange-400 hover:text-black",
     href: "https://kreszvaltozas.hu/",
   },
   {
-    icon: Phone,
-    label: "Kapcsolat",
-    color: "text-blue-400",
-    bg: "bg-white/5 hover:bg-blue-400 hover:text-black",
-    href: "#",
+    icon: AlertCircle,
+    label: "Hibajelentés",
+    color: "text-red-400",
+    bg: "bg-white/5 hover:bg-red-400 hover:text-black",
+    href: "/report",
   },
 ];
 

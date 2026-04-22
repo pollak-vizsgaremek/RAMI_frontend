@@ -20,6 +20,7 @@ const Review = lazy(() => import("./pages/public/Review.jsx"));
 const ForgotPassword = lazy(() => import("./pages/public/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/public/ResetPassword.jsx"));
 const RegisterSchool = lazy(() => import("./pages/public/RegisterSchool.jsx"));
+const Report = lazy(() => import("./pages/public/Report.jsx"));
 
 // Instructor Pages
 const InstructorProfile = lazy(
@@ -67,6 +68,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/register-school" element={<RegisterSchool />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/report" element={<Report />} />
           </Route>
 
           {/* Admin Registration (Standalone) */}

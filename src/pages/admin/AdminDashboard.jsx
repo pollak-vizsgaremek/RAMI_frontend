@@ -131,9 +131,6 @@ const AdminDashboard = () => {
             <option value="month">Ez a hónap</option>
             <option value="year">Ez az év</option>
           </select>
-          <button className="px-4 py-2 bg-[#F6C90E] hover:bg-[#e0b808] text-black font-semibold rounded-lg transition-all">
-            <Download size={18} />
-          </button>
         </div>
       </div>
 

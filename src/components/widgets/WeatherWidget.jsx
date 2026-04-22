@@ -106,7 +106,7 @@ export default function WeatherWidget() {
       <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full blur-[80px] -mr-10 -mt-10 opacity-10 pointer-events-none"></div>
 
       {/* Header: City & Main Icon */}
-      <div className="relative z-10 flex justify-between items-start mb-4">
+      <div className="relative z-10 flex justify-between items-start mb-3">
         <div className="flex-1 min-w-0">
           <span className="text-gray-500 text-[8px] font-black uppercase tracking-widest bg-black/30 px-2 py-0.5 rounded-md inline-block mb-0.5 truncate max-w-full">
             {weather?.name}
@@ -126,7 +126,7 @@ export default function WeatherWidget() {
       </div>
 
       {/* Stats Grid: More compact */}
-      <div className="relative z-10 grid grid-cols-3 gap-3 mb-2">
+      <div className="relative z-10 grid grid-cols-3 gap-2 mb-2">
         <div className="flex flex-col items-center gap-1 bg-black/20 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
           <Wind size={16} className="text-[#F6C90E]" />
           <span className="text-xs font-bold leading-none">
@@ -156,12 +156,12 @@ export default function WeatherWidget() {
 
       {/* Forecast Section: Optimized for vertical space */}
       {forecast && (
-        <div className="relative z-10 mt-2 pt-2 border-t border-white/10">
-          <p className="text-[9px] font-black text-gray-400 mb-1.5 uppercase tracking-[0.15em]">
+        <div className="relative z-10 mt-1 pt-2 border-t border-white/10 flex-1 flex flex-col">
+          <p className="text-[9px] font-black text-gray-400 mb-2 uppercase tracking-[0.15em]">
             24 Órás Előrejelzés
           </p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {forecast.list?.slice(0, 6).map((item, idx) => (
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide flex-1">
+            {forecast.list?.slice(0, 8).map((item, idx) => (
               <div
                 key={idx}
                 className="flex flex-col items-center gap-1.5 shrink-0 min-w-[50px]">
