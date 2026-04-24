@@ -36,7 +36,7 @@ export default function RatingWidget() {
       <span className="text-2xl font-black text-white">
         {loading ? "-" : averageRating}
       </span>
-      <p className="text-[9px] uppercase font-bold text-gray-500">
+      <p className="text-[12px] uppercase font-bold m-2 text-gray-400">
         Átlagos Értékelés
       </p>
     </div>

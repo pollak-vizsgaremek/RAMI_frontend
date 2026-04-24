@@ -9,9 +9,9 @@ export default function PopularCitiesWidget() {
   ];
 
   return (
-    <div className="row-span-2 bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-start border border-white/5 overflow-hidden">
-      <h5 className="font-bold text-[11px] text-gray-400 uppercase mb-6 flex items-center gap-2">
-        <MapPin size={12} className="text-[#F6C90E]" /> Népszerű Városok
+    <div className="row-span-2 bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-start border border-white/5 overflow-hidden transition-opacity duration-500">
+      <h5 className="font-bold text-[14px] text-gray-400 uppercase mb-6 flex items-center gap-2">
+        <MapPin size={16} className="text-[#F6C90E]" /> Népszerű Városok
       </h5>
       <div className="space-y-3 flex-1">
         {cities.map((city, idx) => (
@@ -23,7 +23,7 @@ export default function PopularCitiesWidget() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-white text-sm">{city.name}</p>
-              <p className="text-[10px] text-white">+{city.count} felhasználó</p>
+              <p className="text-[12px] text-gray-200">+{city.count} felhasználó</p>
             </div>
           </div>
         ))}

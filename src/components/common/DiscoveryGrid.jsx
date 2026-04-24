@@ -99,7 +99,6 @@ export default function DiscoveryGrid() {
           <div className="h-full w-full rounded-2xl overflow-hidden shadow-md">
             <BrowseInstructorsWidget />
           </div>
-          <StatisticsWidget />
 
           {/* Row 2 */}
           <RatingWidget />

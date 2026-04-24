@@ -44,7 +44,7 @@ export default function TipsAndTricksWidget() {
       </p>
 
       <div className="flex items-center justify-between w-full">
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-400">
           {currentTipIndex + 1} / {TIPS.length}
         </span>
         <button
