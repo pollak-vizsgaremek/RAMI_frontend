@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MapPin, Award } from "lucide-react";
+import { MapPin, Award, ChevronDown } from "lucide-react";
 
 export default function BrowseInstructors() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function BrowseInstructors() {
 
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState(cityQuery);
 
   // Adatok lekérése a backendről
   useEffect(() => {
@@ -29,16 +30,24 @@ export default function BrowseInstructors() {
     fetchInstructors();
   }, []);
 
-  // Szűrés a Navbarból érkező adatok (név és város) alapján
+  // Szűrés a keresés (név és város) alapján
   const filteredInstructors = instructors.filter((inst) => {
     const matchesSearch = inst.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const matchesCity =
-      cityQuery === "Minden város" ||
-      (inst.location || "Budapest") === cityQuery;
+      selectedCity === "Minden város" ||
+      (inst.location || "Budapest") === selectedCity;
     return matchesSearch && matchesCity;
   });
+
+  // Elérhető városok listájának meghatározása
+  const availableCities = [
+    "Minden város",
+    ...Array.from(
+      new Set(instructors.map((inst) => inst.location || "Budapest"))
+    ).sort(),
+  ];
 
   return (
     <main className="min-h-screen pt-28 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full flex flex-col">
@@ -62,6 +71,41 @@ export default function BrowseInstructors() {
           >
             Iskola regisztráció
           </button>
+        </div>
+      </div>
+
+      {/* Szűrő szekció */}
+      <div className="mb-10 bg-gradient-to-r from-[#21272D] to-[#1A1F25] rounded-2xl border border-white/5 p-6 shadow-xl">
+        <div className="flex flex-col gap-4">
+          <h3 className="text-white font-bold text-lg">Szűrók</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Város szűrő */}
+            <div className="relative">
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <div className="flex items-center gap-2">
+                  <MapPin size={16} className="text-[#F6C90E]" />
+                  Város
+                </div>
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  className="w-full px-4 py-3 bg-[#1A1F25] border border-white/10 rounded-xl text-white font-medium hover:border-[#F6C90E]/30 focus:border-[#F6C90E] focus:outline-none transition-all duration-200 cursor-pointer appearance-none pr-10"
+                >
+                  {availableCities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={18}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -9,7 +9,7 @@ export default function PopularCitiesWidget() {
   ];
 
   return (
-    <div className="row-span-2 bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-start border border-white/5 overflow-hidden transition-opacity duration-500">
+    <div className="row-span-2 bg-[#3A4750] rounded-4xl p-6 flex flex-col justify-start border border-white/5 overflow-hidden">
       <h5 className="font-bold text-[14px] text-gray-400 uppercase mb-6 flex items-center gap-2">
         <MapPin size={16} className="text-[#F6C90E]" /> Népszerű Városok
       </h5>
