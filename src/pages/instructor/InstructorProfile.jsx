@@ -16,7 +16,6 @@ export default function InstructorProfile() {
   const [instructor, setInstructor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
@@ -65,13 +64,6 @@ export default function InstructorProfile() {
       fetchUserInstructors();
     }
   }, [isLoggedIn, user?.id, id]);
-
-  useEffect(() => {
-    if (!loading && !error && instructor) {
-      const timer = setTimeout(() => setIsVisible(true), 50);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, error, instructor]);
 
   const calculateAverage = () => {
     if (!reviews || reviews.length === 0) return "Nincs értékelés";
@@ -198,8 +190,7 @@ export default function InstructorProfile() {
 
   return (
     <main className="min-h-screen pt-28 pb-12 px-4 md:px-8 max-w-5xl mx-auto w-full flex flex-col">
-      <div
-        className={`w-full rounded-4xl p-8 md:p-12 bg-linear-to-br from-[#1A1F25] to-[#303841] border border-white/10 shadow-2xl relative text-white overflow-hidden group transform transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+      <div className="w-full rounded-4xl p-8 md:p-12 bg-gradient-to-br from-[#1A1F25] to-[#303841] border border-white/10 shadow-2xl relative text-white overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#F6C90E] rounded-full blur-[100px] -mr-20 -mt-20 opacity-10 pointer-events-none"></div>
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-10">
