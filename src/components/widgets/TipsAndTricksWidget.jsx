@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Lightbulb, ChevronRight } from 'lucide-react';
 
 const TIPS = [
-  'Kanyarodás: Fékezz előtte le, majd egyenletes gázzal halad a kanyaron.',
-  'Holttér: Sávváltás előtt a tükör mellett nézz hátra a vállad felett.',
-  'Dugó: Ne váltogass sávot folyamatosan, túl sok kockázat.',
-  'Vészfékezés: ABS-es autóban nyomj a fékre és kuplungra egyszerre.',
-  'Turbó: Pálya után ne halj meg azonnal, hagyd 1-2 percig járni.',
-  'Klíma: Havonta kapcsold be télen is, hogy a tömítések jók legyenek.',
-  'Tank: Ne várd meg, hogy teljesen kiüljön, az üledék gyorsít sérülést.',
-  'Akkumulátor: Hosszabb utak után jól feltöltödik a generátor.',
-  'Kulcs: A koponyád antenna - érintsd meg a kulcsot, nagyobb lesz a hatótáv.',
-  'Éjszaka: Rágózás segít éberen tartani az agyat vezetéskor.',
-  'Telefon: Befőttes gumival rá lehet erősíteni a szellőzőrácsra.',
-  'Jégmentesítés: Nem forró vizet, csak meleg vagy ecetes oldatot használj.',
+  "Kanyarodás: Lassíts le, majd egyenletes gázzal haladj tovább.",
+  "Holttér: Sávváltás előtt nézz a tükörbe majd hátra a vállad felett.",
+  "Dugó: Ne váltogass sávot folyamatosan, túl nagy kockázat.",
+  "Vészfékezés: ABS-es autóban nyomj a fékre és kuplungra egyszerre.",
+  "Turbó: Pálya után ne halj meg azonnal, hagyd 1-2 percig járni.",
+  "Klíma: Havonta kapcsold be télen is, hogy a tömítések jók legyenek.",
+  "Tank: Ne várd meg, hogy teljesen kiürüljön, az üledék károsíthatja a motort.",
+  "Akkumulátor: Hosszabb utak után jól feltöltödik a generátor.",
+  "Éjszaka: Rágózás segít éberen tartani az agyat vezetéskor.",
+  "Jégmentesítés: Ne forró vizet, csak meleg vagy ecetes oldatot használj.",
 ];
 
 export default function TipsAndTricksWidget() {
