@@ -30,6 +30,8 @@ const InstructorSearch = lazy(
   () => import("./pages/public/InstructorSearch.jsx"),
 );
 const UserProfile = lazy(() => import("./pages/instructor/UserProfile.jsx"));
+const MyStudents = lazy(() => import("./pages/instructor/MyStudents.jsx"));
+const MyReviews = lazy(() => import("./pages/public/MyReviews.jsx"));
 
 // Admin Pages
 const AdminRegister = lazy(() => import("./pages/admin/AdminRegister.jsx"));
@@ -69,6 +71,8 @@ createRoot(document.getElementById("root")).render(
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/report" element={<Report />} />
+            <Route path="/my-students" element={<MyStudents />} />
+            <Route path="/my-reviews" element={<MyReviews />} />
           </Route>
 
           {/* Admin Registration (Standalone) */}

@@ -37,7 +37,7 @@ export default function Review() {
   const getOktatok = () => {
     if (!isLoggedIn || !user?.id) return;
     api
-      .get(`/user/${user.id}/instructor`)
+      .get(`/user/${user.id}/instructors`)
       .then((res) => {
         setOktatok(res.data);
       })
@@ -58,7 +58,7 @@ export default function Review() {
   useEffect(() => {
     if (user?.id) {
       api
-        .get(`/user/${user.id}/instructor`)
+        .get(`/user/${user.id}/instructors`)
         .then((res) => {
           setOktatok(res.data || []);
         })

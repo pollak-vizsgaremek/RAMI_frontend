@@ -205,14 +205,27 @@ const Navbar = ({
                       onClick={() => setIsMenuOpen(false)}>
                       <User size={18} className="mr-3 text-gray-400" /> Profil
                     </Link>
-                    <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
-                      <Users size={18} className="mr-3 text-gray-400" />{" "}
-                      Oktatóim
-                    </button>
-                    <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
+                    {userRole === "instructor" ? (
+                      <Link
+                        to="/my-students"
+                        className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
+                        onClick={() => setIsMenuOpen(false)}>
+                        <Users size={18} className="mr-3 text-gray-400" />{" "}
+                        Tanulóim
+                      </Link>
+                    ) : (
+                      <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
+                        <Users size={18} className="mr-3 text-gray-400" />{" "}
+                        Oktatóim
+                      </button>
+                    )}
+                    <Link
+                      to="/my-reviews"
+                      className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
+                      onClick={() => setIsMenuOpen(false)}>
                       <Star size={18} className="mr-3 text-gray-400" />{" "}
                       Értékeléseim
-                    </button>
+                    </Link>
                     {userRole === "creator" && (
                       <>
                         <div className="h-px bg-gray-100 my-1"></div>

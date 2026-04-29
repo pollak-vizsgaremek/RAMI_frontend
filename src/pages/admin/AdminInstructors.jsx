@@ -143,9 +143,9 @@ const AdminInstructors = () => {
               {/* Status Indicator Line */}
               <div
                 className={`absolute top-0 left-0 right-0 h-2 ${
-                  instructor.status === "approved"
+                  instructor.approvalStatus === "approved"
                     ? "bg-green-400"
-                    : instructor.status === "rejected"
+                    : instructor.approvalStatus === "rejected"
                       ? "bg-red-400"
                       : "bg-yellow-400"
                 }`}></div>
@@ -187,7 +187,7 @@ const AdminInstructors = () => {
                   Részletek
                 </button>
                 <div className="flex gap-2">
-                  {instructor.status !== "approved" && (
+                  {instructor.approvalStatus !== "approved" && (
                     <button
                       onClick={() => handleApprove(instructor._id)}
                       className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white transition-colors"
@@ -195,7 +195,7 @@ const AdminInstructors = () => {
                       <CheckCircle size={18} />
                     </button>
                   )}
-                  {instructor.status !== "rejected" && (
+                  {instructor.approvalStatus !== "rejected" && (
                     <button
                       onClick={() => {
                         setSelectedInstructor(instructor);

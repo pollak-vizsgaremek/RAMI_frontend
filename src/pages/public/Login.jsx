@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../../assets/images/RAMI_logo.png";
-import { Eye, EyeOff, Shield } from "lucide-react";
+import { Eye, EyeOff, Shield, BookOpen } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [loginMode, setLoginMode] = useState("user"); // "user" | "instructor" | "admin"
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -28,24 +28,22 @@ export default function Login({ onClose, onSwitchToRegister }) {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/v1/auth/login`, {
-        email,
-        password,
-      });
+      // Determine which endpoint to use
+      const endpoint = loginMode === "instructor"
+        ? `${API_URL}/api/v1/auth/login-instructor`
+        : `${API_URL}/api/v1/auth/login`;
 
-      // Log this to see exactly what the backend returns
+      const res = await axios.post(endpoint, { email, password });
+
       console.log("Backend response data:", res.data);
 
-      // Look for the user object (it might be nested inside res.data.user or res.data.data.user)
       const userData = res.data.user || res.data.data?.user || res.data;
 
-      // Handle flexible response formats from backend
       const userId = userData.userId || userData.id || userData._id;
       const userName =
         userData.name || userData.userName || email.split("@")[0];
       const userEmail = userData.email || email;
 
-      // Look for the token (might be nested inside res.data.data)
       const token =
         res.data.token ||
         res.data.accessToken ||
@@ -65,38 +63,51 @@ export default function Login({ onClose, onSwitchToRegister }) {
       sessionStorage.setItem("userName", userName);
       sessionStorage.setItem("userEmail", userEmail);
 
+      // Determine role
+      let userRole;
+      if (loginMode === "admin") {
+        userRole = "creator";
+      } else if (loginMode === "instructor") {
+        userRole = "instructor";
+      } else {
+        userRole = res.data.role || "student";
+      }
+
+      sessionStorage.setItem("userRole", userRole);
+
       // Store to localStorage for AuthContext to pick up
       localStorage.setItem("accessToken", token);
-      const userRole = isAdminMode ? "creator" : res.data.role || "student";
-      sessionStorage.setItem("userRole", userRole);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: userId,
-          name: userName,
-          email: userEmail,
-          role: userRole,
-        }),
-      );
+      const userObj = {
+        id: userId,
+        name: userName,
+        email: userEmail,
+        role: userRole,
+      };
+      // If instructor, also store instructorId
+      if (loginMode === "instructor") {
+        userObj.instructorId = userId;
+      }
+      localStorage.setItem("user", JSON.stringify(userObj));
 
       // Értesítjük a Navbart, hogy változás történt!
       window.dispatchEvent(new Event("authChange"));
-      toast.success(
-        isAdminMode ? "Admin bejelentkezés sikeres!" : "Sikeres bejelentkezés!",
-      );
+
+      const modeLabels = {
+        user: "Sikeres bejelentkezés!",
+        instructor: "Oktatói bejelentkezés sikeres!",
+        admin: "Admin bejelentkezés sikeres!",
+      };
+      toast.success(modeLabels[loginMode]);
 
       setTimeout(() => {
         setLoading(false);
         if (onClose) onClose();
-
-        // Redirect to home page
         navigate("/");
       }, 1500);
     } catch (error) {
       setLoading(false);
       console.error("Login error:", error);
 
-      // Log the full error response for debugging
       if (error.response?.status === 401) {
         console.error("Authentication failed:", error.response.data);
       }
@@ -106,8 +117,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
         error.response?.data?.error ||
         "Hiba történt a bejelentkezés során.";
       toast.error(errorMessage);
-      // Ha hitelesítési hiba (például rossz jelszó), kérdezzük meg a felhasználót,
-      // hogy szeretne-e jelszó-visszaállítást kérni.
+
       if (error.response?.status === 401) {
         const goToReset = window.confirm(
           "Bejelentkezés sikertelen. Elfelejtetted a jelszavad? Szeretnél jelszó-visszaállítást kérni?",
@@ -120,6 +130,8 @@ export default function Login({ onClose, onSwitchToRegister }) {
     }
   };
 
+  const isDark = loginMode === "admin" || loginMode === "instructor";
+
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4 overflow-hidden">
       <div
@@ -127,14 +139,21 @@ export default function Login({ onClose, onSwitchToRegister }) {
         onClick={onClose}
       />
       <div
-        className={`relative w-full max-w-110 ${isAdminMode ? "bg-linear-to-br from-slate-900 to-slate-800" : "bg-white"} rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"}`}>
-        {/* Mode Toggle */}
-        <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-full">
+        className={`relative w-full max-w-110 ${
+          loginMode === "admin"
+            ? "bg-linear-to-br from-slate-900 to-slate-800"
+            : loginMode === "instructor"
+              ? "bg-linear-to-br from-[#1a2332] to-[#2a3a4a]"
+              : "bg-white"
+        } rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"}`}>
+
+        {/* Mode Toggle — 3 tabs */}
+        <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-full">
           <button
             type="button"
-            onClick={() => setIsAdminMode(false)}
-            className={`flex-1 py-2 px-4 rounded-full font-semibold transition-all ${
-              !isAdminMode
+            onClick={() => setLoginMode("user")}
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all text-sm ${
+              loginMode === "user"
                 ? "bg-white text-black shadow-md"
                 : "text-gray-600 hover:text-gray-800"
             }`}>
@@ -142,13 +161,24 @@ export default function Login({ onClose, onSwitchToRegister }) {
           </button>
           <button
             type="button"
-            onClick={() => setIsAdminMode(true)}
-            className={`flex-1 py-2 px-4 rounded-full font-semibold transition-all flex items-center justify-center gap-2 ${
-              isAdminMode
+            onClick={() => setLoginMode("instructor")}
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${
+              loginMode === "instructor"
+                ? "bg-blue-500 text-white shadow-md"
+                : "text-gray-600 hover:text-gray-800"
+            }`}>
+            <BookOpen size={14} />
+            Oktató
+          </button>
+          <button
+            type="button"
+            onClick={() => setLoginMode("admin")}
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${
+              loginMode === "admin"
                 ? "bg-[#F6C90E] text-black shadow-md"
                 : "text-gray-600 hover:text-gray-800"
             }`}>
-            <Shield size={16} />
+            <Shield size={14} />
             Admin
           </button>
         </div>
@@ -157,12 +187,18 @@ export default function Login({ onClose, onSwitchToRegister }) {
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="RAMI logo" className="h-16 mb-2" />
           <h2
-            className={`text-2xl font-black ${isAdminMode ? "text-white" : "text-gray-900"}`}>
-            {isAdminMode ? "Admin Panel" : "Üdvözlünk újra!"}
+            className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>
+            {loginMode === "admin"
+              ? "Admin Panel"
+              : loginMode === "instructor"
+                ? "Oktatói Belépés"
+                : "Üdvözlünk újra!"}
           </h2>
-          {isAdminMode && (
+          {loginMode !== "user" && (
             <p className="text-sm text-gray-400 mt-2">
-              Adminisztrátor bejelentkezés
+              {loginMode === "admin"
+                ? "Adminisztrátor bejelentkezés"
+                : "Oktató bejelentkezés"}
             </p>
           )}
         </div>
@@ -170,13 +206,13 @@ export default function Login({ onClose, onSwitchToRegister }) {
         <form className="space-y-5" onSubmit={LoginFunc}>
           <div className="flex flex-col group">
             <label
-              className={`text-xs font-bold ${isAdminMode ? "text-gray-400" : "text-gray-400"} uppercase mb-2 ml-1 transition-all group-focus-within:${isAdminMode ? "text-yellow-400" : "text-black"}`}>
+              className={`text-xs font-bold ${isDark ? "text-gray-400" : "text-gray-400"} uppercase mb-2 ml-1`}>
               E-mail
             </label>
             <input
               type="email"
               className={`w-full border ${
-                isAdminMode
+                isDark
                   ? "border-gray-600 bg-gray-800 text-white focus:ring-2 focus:ring-[#F6C90E]/50 focus:border-[#F6C90E]"
                   : "border-gray-200 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500"
               } rounded-xl px-4 py-3.5 outline-none transition-all`}
@@ -187,14 +223,14 @@ export default function Login({ onClose, onSwitchToRegister }) {
 
           <div className="flex flex-col group">
             <label
-              className={`text-xs font-bold ${isAdminMode ? "text-gray-400" : "text-gray-400"} uppercase mb-2 ml-1 transition-all group-focus-within:${isAdminMode ? "text-yellow-400" : "text-black"}`}>
+              className={`text-xs font-bold ${isDark ? "text-gray-400" : "text-gray-400"} uppercase mb-2 ml-1`}>
               Jelszó
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 className={`w-full border ${
-                  isAdminMode
+                  isDark
                     ? "border-gray-600 bg-gray-800 text-white focus:ring-2 focus:ring-[#F6C90E]/50 focus:border-[#F6C90E]"
                     : "border-gray-200 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500"
                 } rounded-xl px-4 py-3.5 outline-none transition-all`}
@@ -205,7 +241,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${
-                  isAdminMode
+                  isDark
                     ? "text-gray-500 hover:text-[#F6C90E]"
                     : "text-gray-400 hover:text-yellow-600"
                 }`}>
@@ -218,13 +254,17 @@ export default function Login({ onClose, onSwitchToRegister }) {
             type="submit"
             disabled={!isFormValid || loading}
             className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 cursor-pointer ${
-              isAdminMode
+              loginMode === "admin"
                 ? isFormValid && !loading
                   ? "bg-[#F6C90E] text-black hover:bg-yellow-500 shadow-lg shadow-yellow-500/50"
                   : "bg-gray-600 text-gray-400 cursor-not-allowed"
-                : isFormValid && !loading
-                  ? "bg-black text-white hover:bg-gray-800 shadow-lg"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : loginMode === "instructor"
+                  ? isFormValid && !loading
+                    ? "bg-blue-500 text-white hover:bg-blue-600 shadow-lg shadow-blue-500/30"
+                    : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : isFormValid && !loading
+                    ? "bg-black text-white hover:bg-gray-800 shadow-lg"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -236,7 +276,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
             )}
           </button>
 
-          {!isAdminMode && (
+          {loginMode === "user" && (
             <>
               <div className="flex justify-between items-center text-xs mt-4">
                 <button
@@ -261,12 +301,20 @@ export default function Login({ onClose, onSwitchToRegister }) {
             </>
           )}
 
-          {isAdminMode && (
+          {loginMode === "admin" && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-xs text-blue-800 font-medium">
                 💼 <strong>Adminisztrátor bejelentkezés:</strong> Csak a
-                platform adminisztrátorai férhetnek hozzá. Ezt a funkciót a
-                szuperfelhasználók tartják fenn.
+                platform adminisztrátorai férhetnek hozzá.
+              </p>
+            </div>
+          )}
+
+          {loginMode === "instructor" && (
+            <div className="mt-6 p-4 bg-blue-900/30 border border-blue-700/30 rounded-lg">
+              <p className="text-xs text-blue-300 font-medium">
+                📚 <strong>Oktatói bejelentkezés:</strong> Használd az oktatói
+                regisztrációnál megadott email címed és jelszavad.
               </p>
             </div>
           )}

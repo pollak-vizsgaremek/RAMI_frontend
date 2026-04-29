@@ -104,7 +104,7 @@ export default function RegisterInstructor({ onClose }) {
         password,
         phoneNumber,
         hobbies: hobbies || undefined,
-        school: selectedSchool,
+        schools: [selectedSchool],
         city,
         experience: Number(experience),
         categories: selectedCategories.length ? selectedCategories : undefined,

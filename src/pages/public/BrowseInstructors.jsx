@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MapPin, Award, ChevronDown } from "lucide-react";
+import { MapPin, Award, ChevronDown, Star } from "lucide-react";
 
 export default function BrowseInstructors() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function BrowseInstructors() {
       .includes(searchQuery.toLowerCase());
     const matchesCity =
       selectedCity === "Minden város" ||
-      (inst.location || "Budapest") === selectedCity;
+      (inst.city || "Budapest") === selectedCity;
     return matchesSearch && matchesCity;
   });
 
@@ -45,7 +45,7 @@ export default function BrowseInstructors() {
   const availableCities = [
     "Minden város",
     ...Array.from(
-      new Set(instructors.map((inst) => inst.location || "Budapest"))
+      new Set(instructors.map((inst) => inst.city || "Budapest"))
     ).sort(),
   ];
 
@@ -65,12 +65,6 @@ export default function BrowseInstructors() {
           <div className="bg-[#F6C90E]/20 text-[#F6C90E] px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase border border-[#F6C90E]/20 shadow-lg">
             {filteredInstructors.length} találat
           </div>
-          <button
-            onClick={() => navigate("/register-school")}
-            className="px-4 py-2 bg-[#F6C90E] text-black rounded-xl font-bold hover:opacity-90 transition-colors"
-          >
-            Iskola regisztráció
-          </button>
         </div>
       </div>
 
@@ -131,12 +125,19 @@ export default function BrowseInstructors() {
               key={inst._id}
               onClick={() => navigate(`/instructor/${inst._id}`)}
               className="bg-[#21272D] border border-white/5 rounded-3xl p-8 hover:border-[#F6C90E]/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 cursor-pointer shadow-xl group relative overflow-hidden flex flex-col items-center">
-              {/* Kiemelt oktató jelvény */}
-              {inst.isFeatured && (
-                <div className="absolute top-0 right-0 bg-[#F6C90E] text-black text-[10px] font-black px-4 py-1.5 rounded-bl-xl z-10 flex items-center gap-1 uppercase tracking-widest shadow-md">
-                  <Award size={14} /> Kiemelt
-                </div>
-              )}
+              {/* Értékelés badge jobb felső sarok */}
+              <div className="absolute top-3 right-3 z-10">
+                {inst.averageRating > 0 ? (
+                  <div className="bg-[#F6C90E]/15 border border-[#F6C90E]/30 backdrop-blur-sm px-2.5 py-1 rounded-xl flex items-center gap-1">
+                    <Star size={12} className="text-[#F6C90E] fill-[#F6C90E]" />
+                    <span className="text-sm font-black text-[#F6C90E]">{inst.averageRating}</span>
+                  </div>
+                ) : (
+                  <div className="bg-white/5 border border-white/10 backdrop-blur-sm px-2.5 py-1 rounded-xl">
+                    <span className="text-xs font-bold text-gray-500">Új</span>
+                  </div>
+                )}
+              </div>
 
               {/* Profilkép helye */}
               <div className="w-24 h-24 bg-[#1A1F25] rounded-full mb-5 border-4 border-white/5 group-hover:border-[#F6C90E] transition-colors flex items-center justify-center overflow-hidden shadow-inner">
@@ -153,7 +154,7 @@ export default function BrowseInstructors() {
               {/* Város */}
               <div className="flex items-center justify-center gap-1.5 text-sm text-gray-400 mb-6 font-medium bg-black/20 px-3 py-1.5 rounded-full">
                 <MapPin size={16} className="text-[#F6C90E]" />{" "}
-                {inst.location || "Budapest"}
+                {inst.city || "Budapest"}
               </div>
 
               {/* Iskola neve */}

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router";
 import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
 import {
-  getToken,
   getStoredUser,
 } from "../../services/storage/storageService.js";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -19,7 +18,6 @@ export default function InstructorProfile() {
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
-  const [userInstructors, setUserInstructors] = useState([]);
   const [nominationStatus, setNominationStatus] = useState(null);
   const [nominatingLoading, setNominatingLoading] = useState(false);
 
@@ -48,20 +46,18 @@ export default function InstructorProfile() {
   }, [id]);
 
   useEffect(() => {
-    if (isLoggedIn && user?.id) {
-      const fetchUserInstructors = async () => {
+    if (isLoggedIn && user?.id && id) {
+      const checkStatus = async () => {
         try {
-          const res = await api.get(`/user/${user.id}/instructor`);
-          const instructorIds = res.data.map((inst) => inst._id || inst.id);
-          setUserInstructors(instructorIds);
-          if (instructorIds.includes(id)) {
-            setNominationStatus('confirmed');
+          const res = await api.get(`/instructor/${id}/nomination-status/${user.id}`);
+          if (res.data?.status) {
+            setNominationStatus(res.data.status === 'none' ? null : res.data.status);
           }
         } catch (err) {
-          console.error("Failed to fetch user instructors:", err);
+          console.error("Failed to check nomination status:", err);
         }
       };
-      fetchUserInstructors();
+      checkStatus();
     }
   }, [isLoggedIn, user?.id, id]);
 
@@ -71,11 +67,11 @@ export default function InstructorProfile() {
     let totalScore = 0;
 
     reviews.forEach((r) => {
-      const myRating = r.rating && r.rating[0] ? r.rating[0] : r;
-      const t = Number(myRating.turelem) || 0;
-      const s = Number(myRating.szaktudas) || 0;
-      const k = Number(myRating.kommunikacio) || 0;
-      const rug = Number(myRating.rugalmasag) || 0;
+      const d = r.details || {};
+      const t = Number(d.turelem) || 0;
+      const s = Number(d.szaktudas) || 0;
+      const k = Number(d.kommunikacio) || 0;
+      const rug = Number(d.rugalmasag) || 0;
 
       if (t > 0 || s > 0 || k > 0 || rug > 0) {
         totalScore += (t + s + k + rug) / 4;
@@ -87,10 +83,6 @@ export default function InstructorProfile() {
     return (totalScore / validCount).toFixed(1) + " ★";
   };
 
-  const handleReviewClick = () => {
-    if (!getToken()) return toast.warning("Jelentkezz be az értékeléshez!");
-    navigate(`/review?instructorId=${id}`);
-  };
 
   const handleNominateClick = async () => {
     if (!isLoggedIn || !user?.id) {
@@ -164,7 +156,7 @@ export default function InstructorProfile() {
   }
 
   const validReviewCount = reviews.filter(
-    (r) => (Number(r.rating?.[0]?.turelem) || 0) > 0,
+    (r) => (Number(r.details?.turelem) || 0) > 0,
   ).length;
 
   const sortedReviews = [...reviews].sort((a, b) => {
@@ -172,16 +164,16 @@ export default function InstructorProfile() {
       return (b.helpfulCount || 0) - (a.helpfulCount || 0);
     if (sortBy === "highest") {
       const aAvg =
-        ((Number(a.rating?.[0]?.turelem) || 0) +
-          (Number(a.rating?.[0]?.szaktudas) || 0) +
-          (Number(a.rating?.[0]?.kommunikacio) || 0) +
-          (Number(a.rating?.[0]?.rugalmasag) || 0)) /
+        ((Number(a.details?.turelem) || 0) +
+          (Number(a.details?.szaktudas) || 0) +
+          (Number(a.details?.kommunikacio) || 0) +
+          (Number(a.details?.rugalmasag) || 0)) /
         4;
       const bAvg =
-        ((Number(b.rating?.[0]?.turelem) || 0) +
-          (Number(b.rating?.[0]?.szaktudas) || 0) +
-          (Number(b.rating?.[0]?.kommunikacio) || 0) +
-          (Number(b.rating?.[0]?.rugalmasag) || 0)) /
+        ((Number(b.details?.turelem) || 0) +
+          (Number(b.details?.szaktudas) || 0) +
+          (Number(b.details?.kommunikacio) || 0) +
+          (Number(b.details?.rugalmasag) || 0)) /
         4;
       return bAvg - aAvg;
     }
@@ -205,11 +197,13 @@ export default function InstructorProfile() {
                 Átlagos Értékelés
               </span>
               <span
-                className={`text-3xl font-black ${validReviewCount > 0 ? "text-[#F6C90E]" : "text-gray-500"}`}>
-                {calculateAverage()}
+                className={`text-3xl font-black ${(instructor.averageRating > 0 || validReviewCount > 0) ? "text-[#F6C90E]" : "text-gray-500"}`}>
+                {instructor.averageRating > 0
+                  ? `${instructor.averageRating} ★`
+                  : calculateAverage()}
               </span>
               <span className="text-xs text-gray-400 mt-1">
-                {validReviewCount} vélemény alapján
+                {instructor.reviewCount || validReviewCount} vélemény alapján
               </span>
             </div>
           </div>
@@ -284,22 +278,22 @@ export default function InstructorProfile() {
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             {nominationStatus === 'confirmed' ? (
               <button
-                onClick={handleReviewClick}
-                className="whitespace-nowrap w-full md:w-auto bg-gray-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:bg-gray-600 active:scale-95 transition-all text-sm cursor-pointer">
-                Értékelés
+                onClick={() => navigate(`/review?instructorId=${id}&instructorName=${encodeURIComponent(instructor.name)}`)}
+                className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all text-sm cursor-pointer shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40">
+                ⭐ Értékelés írása
               </button>
             ) : nominationStatus === 'pending' ? (
               <button
                 disabled
-                className="whitespace-nowrap w-full md:w-auto bg-gray-600 text-gray-400 px-8 py-4 rounded-2xl font-black uppercase tracking-wide text-sm cursor-not-allowed opacity-60">
-                Függő jelölés
+                className="whitespace-nowrap w-full md:w-auto bg-yellow-600/20 text-yellow-400 border border-yellow-500/30 px-8 py-4 rounded-2xl font-black uppercase tracking-wide text-sm cursor-not-allowed">
+                ⏳ Jelölés függőben
               </button>
             ) : (
               <button
                 onClick={handleNominateClick}
                 disabled={nominatingLoading}
                 className="whitespace-nowrap w-full md:w-auto bg-gray-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:bg-gray-600 active:scale-95 transition-all text-sm cursor-pointer disabled:opacity-60">
-                {nominatingLoading ? "Jelölés..." : "Jelölés"}
+                {nominatingLoading ? "Jelölés..." : "Jelölés oktatómnak"}
               </button>
             )}
             <button className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all text-sm cursor-pointer shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40">
@@ -345,19 +339,18 @@ export default function InstructorProfile() {
           ) : (
             <div className="grid grid-cols-1 gap-4 mt-2">
               {sortedReviews.map((review) => {
-                const myRating =
-                  review.rating && review.rating[0] ? review.rating[0] : review;
-                const t = Number(myRating.turelem) || 0;
-                const s = Number(myRating.szaktudas) || 0;
-                const k = Number(myRating.kommunikacio) || 0;
-                const rug = Number(myRating.rugalmasag) || 0;
+                const d = review.details || {};
+                const t = Number(d.turelem) || 0;
+                const s = Number(d.szaktudas) || 0;
+                const k = Number(d.kommunikacio) || 0;
+                const rug = Number(d.rugalmasag) || 0;
 
                 if (
                   t === 0 &&
                   s === 0 &&
                   k === 0 &&
                   rug === 0 &&
-                  !myRating.tapasztalat
+                  !review.comment
                 )
                   return null;
                 const avg = ((t + s + k + rug) / 4).toFixed(1);
@@ -382,9 +375,9 @@ export default function InstructorProfile() {
                       </span>
                     </div>
 
-                    {myRating.tapasztalat && (
+                    {review.comment && (
                       <p className="text-gray-300 mb-5 leading-relaxed bg-black/20 p-4 rounded-xl italic">
-                        "{myRating.tapasztalat}"
+                        "{review.comment}"
                       </p>
                     )}
 
