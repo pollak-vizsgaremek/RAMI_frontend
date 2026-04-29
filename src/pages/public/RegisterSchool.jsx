@@ -13,6 +13,8 @@ export default function RegisterSchool({ onClose }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,7 +22,6 @@ export default function RegisterSchool({ onClose }) {
       try {
         const res = await api.get("/categories/");
         const data = res.data;
-        // find first array in response
         const findFirstArray = (obj) => {
           if (!obj) return null;
           if (Array.isArray(obj)) return obj;
@@ -62,10 +63,11 @@ export default function RegisterSchool({ onClose }) {
   };
 
   const isFormValid = () => {
+    if (!userEmail || !userEmail.includes("@")) return false;
+    if (!userPassword || userPassword.length < 6) return false;
     if (!name || name.trim().length < 2 || name.trim().length > 100) return false;
     if (!address || address.trim().length < 5 || address.trim().length > 200) return false;
     if (!/^\d{4}$/.test(zipCode.trim())) return false;
-    // all contact entries must be non-empty
     if (!contacts.length || contacts.some((c) => !c || !c.trim())) return false;
     if (webpage && !isValidUrl(webpage)) return false;
     if (!selectedCategories.length) return false;
@@ -85,17 +87,19 @@ export default function RegisterSchool({ onClose }) {
         elerhetosegek: contacts.map((p) => ({ phoneNumber: p.trim() })),
         webpage: webpage ? webpage.trim() : undefined,
         categories: selectedCategories.length ? selectedCategories : undefined,
+        userEmail: userEmail.trim(),
+        userPassword: userPassword
       };
 
-      await api.post("/school/register", payload);
+      await api.post("/school/public-register", payload);
 
-      toast.success("Iskola sikeresen regisztrálva.");
+      toast.success("Iskola sikeresen regisztrálva. Kérjük lépj be a fiókodba a folytatáshoz.");
       setTimeout(() => {
         if (onClose) onClose();
-        navigate("/");
-      }, 1200);
+        navigate("/login");
+      }, 1500);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Regisztráció sikertelen.");
+      toast.error(err.response?.data?.message || err.response?.data?.error || "Regisztráció sikertelen.");
     } finally {
       setLoading(false);
     }
@@ -107,13 +111,48 @@ export default function RegisterSchool({ onClose }) {
         <div className="bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-700">
           <h2 className="text-2xl font-bold text-white mb-4">Iskola regisztráció</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
+            
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
+              <p className="text-sm text-yellow-200">
+                <strong className="text-yellow-400">Figyelem:</strong> Iskola regisztrációjához rendelkezned kell egy hitelesített felhasználói fiókkal. Kérjük add meg a belépési adataidat!
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 mb-1">Fiók Email címe *</label>
+                <input 
+                  type="email" 
+                  value={userEmail} 
+                  onChange={(e) => setUserEmail(e.target.value)} 
+                  required 
+                  placeholder="pelda@email.hu"
+                  className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-[#F6C90E] focus:outline-none" 
+                />
+              </div>
+              <div>
+                <label className="block text-gray-300 mb-1">Fiók Jelszava *</label>
+                <input 
+                  type="password" 
+                  value={userPassword} 
+                  onChange={(e) => setUserPassword(e.target.value)} 
+                  required 
+                  minLength={6}
+                  placeholder="******"
+                  className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-[#F6C90E] focus:outline-none" 
+                />
+              </div>
+            </div>
+
+            <hr className="border-gray-700 my-6" />
+
             <div>
-              <label className="block text-gray-300 mb-1">Név *</label>
+              <label className="block text-gray-300 mb-1">Iskola Neve *</label>
               <input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={100} className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600" />
             </div>
 
             <div>
-              <label className="block text-gray-300 mb-1">Cím *</label>
+              <label className="block text-gray-300 mb-1">Iskola Címe *</label>
               <input value={address} onChange={(e) => setAddress(e.target.value)} required minLength={5} maxLength={200} className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600" />
             </div>
 

@@ -141,9 +141,13 @@ export default function BrowseInstructors() {
 
               {/* Profilkép helye */}
               <div className="w-24 h-24 bg-[#1A1F25] rounded-full mb-5 border-4 border-white/5 group-hover:border-[#F6C90E] transition-colors flex items-center justify-center overflow-hidden shadow-inner">
-                <span className="text-xs text-gray-500 font-medium">
-                  Nincs kép
-                </span>
+                {inst.profileImage ? (
+                  <img src={inst.profileImage} alt={inst.name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xs text-gray-500 font-medium">
+                    Nincs kép
+                  </span>
+                )}
               </div>
 
               {/* Oktató neve */}

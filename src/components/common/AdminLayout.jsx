@@ -10,6 +10,8 @@ import {
   AlertCircle,
   Settings,
   Home,
+  Shield,
+  Building2,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 
@@ -41,15 +43,16 @@ const AdminLayout = () => {
       path: "/admin/reviews",
     },
     {
-      label: "Reports",
+      label: "Jelentések",
       icon: AlertCircle,
       path: "/admin/reports",
     },
     {
-      label: "Settings",
-      icon: Settings,
-      path: "/admin/settings",
+      label: "Iskolák",
+      icon: Building2,
+      path: "/admin/schools",
     },
+
   ];
 
   const isActive = (path, exact = false) => {
@@ -60,10 +63,8 @@ const AdminLayout = () => {
   };
 
   const handleLogout = async () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      await logout();
-      window.location.href = "/";
-    }
+    await logout();
+    window.location.href = "/";
   };
 
   return (

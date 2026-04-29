@@ -43,6 +43,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
       const userName =
         userData.name || userData.userName || email.split("@")[0];
       const userEmail = userData.email || email;
+      const userProfileImage = userData.profileImage || null;
 
       const token =
         res.data.token ||
@@ -57,20 +58,32 @@ export default function Login({ onClose, onSwitchToRegister }) {
         );
       }
 
+      const actualRole = userData.role || res.data.role;
+
+      // --- Security Check: Ensure non-admins cannot log in via the Admin panel ---
+      if (loginMode === "admin") {
+        if (actualRole !== "admin" && actualRole !== "creator") {
+          throw new Error("Nincs jogosultságod adminisztrátorként belépni!");
+        }
+      }
+
       // Store to both sessionStorage (for Navbar) and localStorage (for AuthContext)
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("userId", userId);
       sessionStorage.setItem("userName", userName);
       sessionStorage.setItem("userEmail", userEmail);
+      if (userProfileImage) {
+        sessionStorage.setItem("userProfileImage", userProfileImage);
+      }
 
       // Determine role
       let userRole;
       if (loginMode === "admin") {
-        userRole = "creator";
+        userRole = actualRole || "creator";
       } else if (loginMode === "instructor") {
         userRole = "instructor";
       } else {
-        userRole = res.data.role || "student";
+        userRole = actualRole || "student";
       }
 
       sessionStorage.setItem("userRole", userRole);
@@ -82,6 +95,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
         name: userName,
         email: userEmail,
         role: userRole,
+        profileImage: userProfileImage,
       };
       // If instructor, also store instructorId
       if (loginMode === "instructor") {
@@ -276,19 +290,22 @@ export default function Login({ onClose, onSwitchToRegister }) {
             )}
           </button>
 
+          {(loginMode === "user" || loginMode === "instructor") && (
+            <div className="flex justify-between items-center text-xs mt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onClose) onClose();
+                  navigate("/forgot-password");
+                }}
+                className={`${isDark ? "text-blue-400" : "text-yellow-600"} font-bold hover:underline`}>
+                Elfelejtetted a jelszavad?
+              </button>
+            </div>
+          )}
+
           {loginMode === "user" && (
             <>
-              <div className="flex justify-between items-center text-xs mt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onClose) onClose();
-                    navigate("/forgot-password");
-                  }}
-                  className="text-yellow-600 font-bold hover:underline">
-                  Elfelejtetted a jelszavad?
-                </button>
-              </div>
               <p className="text-center text-sm text-gray-500 mt-6">
                 Új vagy még?{" "}
                 <button

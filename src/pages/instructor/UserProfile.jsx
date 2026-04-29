@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
@@ -6,11 +6,15 @@ import {
   getToken,
   getStoredUser,
 } from "../../services/storage/storageService.js";
+import { Camera, Loader2 } from "lucide-react";
 
 export default function UserProfile() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({ name: "", email: "", phone: "" });
   const [isVisible, setIsVisible] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [myReviews, setMyReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
@@ -27,7 +31,33 @@ export default function UserProfile() {
     const name = user?.name || "Ismeretlen Felhasználó";
     const email = user?.email || "Nincs e-mail megadva";
     const phone = user?.phone || "Nincs megadva";
-    setUserData({ name, email, phone });
+    const role = user?.role || "student";
+    const instructorId = user?.instructorId;
+    setUserData({ name, email, phone, id: user?.id, role, instructorId });
+
+    // Load existing profile image
+    if (user?.id) {
+      if (user.profileImage) {
+        setProfileImage(user.profileImage);
+      }
+      
+      const endpoint = role === "instructor" 
+        ? `/instructor/${instructorId || user.id}` 
+        : `/user/${user.id}`;
+        
+      api.get(endpoint).then((res) => {
+        if (res.data?.profileImage) {
+          setProfileImage(res.data.profileImage);
+          // Also sync with storage just in case
+          const storedUser = getStoredUser();
+          if (storedUser) {
+             storedUser.profileImage = res.data.profileImage;
+             localStorage.setItem("user", JSON.stringify(storedUser));
+             sessionStorage.setItem("userProfileImage", res.data.profileImage);
+          }
+        }
+      }).catch(() => {});
+    }
 
     const fetchMyReviews = async () => {
       try {
@@ -47,20 +77,58 @@ export default function UserProfile() {
     return () => clearTimeout(timer);
   }, [navigate]);
 
-  // NEW FEATURE: Delete a review
-  const handleDeleteReview = async (reviewId) => {
-    if (
-      !window.confirm(
-        "Biztosan törölni szeretnéd ezt az értékelést? Ezt nem lehet visszavonni.",
-      )
-    ) {
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("A kép mérete maximum 2MB lehet!");
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Csak képfájlt tölthetsz fel!");
       return;
     }
 
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result;
+      setUploadingImage(true);
+      try {
+        const storedUser = getStoredUser();
+        const isInstructor = storedUser?.role === "instructor";
+        const instructorId = storedUser?.instructorId || userData.instructorId || userData.id;
+        const endpoint = isInstructor 
+          ? `/instructor/${instructorId}/profile-image` 
+          : `/user/${userData.id}/profile-image`;
+          
+        const res = await api.post(endpoint, {
+          profileImage: base64,
+        });
+        setProfileImage(res.data.profileImage);
+        
+        // Update local storage so Navbar sees it
+        storedUser.profileImage = res.data.profileImage;
+        localStorage.setItem("user", JSON.stringify(storedUser));
+        sessionStorage.setItem("userProfileImage", res.data.profileImage);
+        window.dispatchEvent(new Event("authChange"));
+        
+        toast.success("Profilkép sikeresen feltöltve!");
+      } catch (err) {
+        toast.error(err.response?.data?.error || "Hiba a feltöltés közben.");
+      } finally {
+        setUploadingImage(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Biztosan törölni szeretnéd ezt az értékelést? Ezt nem lehet visszavonni.")) {
+      return;
+    }
     try {
       await api.delete(`/review/${reviewId}`);
-
-      // Remove it from the screen instantly
       setMyReviews(myReviews.filter((review) => review._id !== reviewId));
       toast.success("Értékelés sikeresen törölve!");
     } catch (error) {
@@ -77,23 +145,57 @@ export default function UserProfile() {
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5 lg:col-span-4 flex flex-col">
-            <div className="w-full aspect-4/3 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
-              <div className="w-full h-full bg-linear-to-br from-gray-700 to-gray-800 flex flex-col items-center justify-center text-gray-400">
-                <span className="font-medium text-sm">Profilkép helye</span>
+            {/* Profile Image */}
+            <div className="relative w-full aspect-square max-w-[240px] mx-auto md:mx-0">
+              <div className="w-full h-full rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg bg-white/5">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="Profilkép"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 gap-2">
+                    <Camera size={40} className="text-gray-600" />
+                    <span className="text-sm font-medium">Nincs profilkép</span>
+                  </div>
+                )}
               </div>
+              {/* Upload overlay button */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="absolute bottom-3 right-3 bg-[#F6C90E] hover:bg-yellow-400 text-black rounded-xl p-2.5 shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer disabled:opacity-60"
+                title="Profilkép módosítása">
+                {uploadingImage ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Camera size={18} />
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
             </div>
+            <p className="text-xs text-gray-500 mt-2 text-center md:text-left">
+              Max. 2MB · JPG, PNG, WEBP
+            </p>
           </div>
 
           <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-start">
             <div className="mb-6">
               <span className="bg-[#F6C90E]/20 text-[#F6C90E] border border-[#F6C90E]/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-3">
-                Felhasználó
+                {userData.role === "instructor" ? "Oktató" : userData.role === "admin" || userData.role === "creator" ? "Adminisztrátor" : userData.role === "school" ? "Autósiskola" : "Tanuló"}
               </span>
               <h2 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">
                 {userData.name}
               </h2>
               <p className="opacity-90 font-medium text-gray-400 text-lg">
-                Regisztrált tag
+                {userData.role === "instructor" ? "Regisztrált oktató" : userData.role === "admin" || userData.role === "creator" ? "Rendszergazda" : userData.role === "school" ? "Iskola fiók" : "Regisztrált tag"}
               </p>
             </div>
           </div>
@@ -118,11 +220,7 @@ export default function UserProfile() {
                   Telefon
                 </h4>
                 <a
-                  href={
-                    userData.phone !== "Nincs megadva"
-                      ? `tel:${userData.phone}`
-                      : "#"
-                  }
+                  href={userData.phone !== "Nincs megadva" ? `tel:${userData.phone}` : "#"}
                   className={`font-medium text-lg transition-colors ${userData.phone !== "Nincs megadva" ? "text-white hover:text-[#F6C90E]" : "text-gray-500 cursor-default"}`}>
                   {userData.phone}
                 </a>
@@ -161,13 +259,7 @@ export default function UserProfile() {
                 const k = Number(myRating.kommunikacio) || 0;
                 const rug = Number(myRating.rugalmasag) || 0;
 
-                if (
-                  t === 0 &&
-                  s === 0 &&
-                  k === 0 &&
-                  rug === 0 &&
-                  !myRating.tapasztalat
-                )
+                if (t === 0 && s === 0 && k === 0 && rug === 0 && !myRating.tapasztalat)
                   return null;
                 const avg = ((t + s + k + rug) / 4).toFixed(1);
 
@@ -175,21 +267,11 @@ export default function UserProfile() {
                   <div
                     key={review._id}
                     className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:border-[#F6C90E]/30 transition-colors relative">
-                    {/* NEW: Delete Button */}
                     <button
                       onClick={() => handleDeleteReview(review._id)}
                       className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition-colors p-2 cursor-pointer"
                       title="Értékelés törlése">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 6h18"></path>
                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                         <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -210,18 +292,10 @@ export default function UserProfile() {
                       </p>
                     )}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-500 uppercase tracking-wider font-bold">
-                      <div>
-                        Türelem: <span className="text-white">{t}</span>
-                      </div>
-                      <div>
-                        Szaktudás: <span className="text-white">{s}</span>
-                      </div>
-                      <div>
-                        Kommunikáció: <span className="text-white">{k}</span>
-                      </div>
-                      <div>
-                        Rugalmaság: <span className="text-white">{rug}</span>
-                      </div>
+                      <div>Türelem: <span className="text-white">{t}</span></div>
+                      <div>Szaktudás: <span className="text-white">{s}</span></div>
+                      <div>Kommunikáció: <span className="text-white">{k}</span></div>
+                      <div>Rugalmaság: <span className="text-white">{rug}</span></div>
                     </div>
                   </div>
                 );

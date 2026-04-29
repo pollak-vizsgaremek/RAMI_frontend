@@ -195,3 +195,49 @@ export const getAnalytics = async () => {
     );
   }
 };
+
+// ─── SCHOOLS MANAGEMENT ────────────────────────────────────────────────────
+export const getSchoolsList = async () => {
+  try {
+    const response = await api.get(`/school`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to fetch schools");
+  }
+};
+
+export const getSchoolById = async (schoolId) => {
+  try {
+    const response = await api.get(`/school/${schoolId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to fetch school details");
+  }
+};
+
+export const registerSchool = async (schoolData) => {
+  try {
+    const response = await api.post(`/school/register`, schoolData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.response?.data?.errors?.join(', ') || "Failed to create school");
+  }
+};
+
+export const updateSchool = async (schoolId, updateData) => {
+  try {
+    const response = await api.put(`/school/${schoolId}`, updateData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.response?.data?.errors?.join(', ') || "Failed to update school");
+  }
+};
+
+export const deleteSchool = async (schoolId) => {
+  try {
+    const response = await api.delete(`/school/${schoolId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Failed to delete school");
+  }
+};

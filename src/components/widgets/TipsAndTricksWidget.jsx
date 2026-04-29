@@ -6,12 +6,16 @@ const TIPS = [
   "Holttér: Sávváltás előtt nézz a tükörbe majd hátra a vállad felett.",
   "Dugó: Ne váltogass sávot folyamatosan, túl nagy kockázat.",
   "Vészfékezés: ABS-es autóban nyomj a fékre és kuplungra egyszerre.",
-  "Turbó: Pálya után ne halj meg azonnal, hagyd 1-2 percig járni.",
-  "Klíma: Havonta kapcsold be télen is, hogy a tömítések jók legyenek.",
+  "Turbó: Autó pályás vezetés után ne állítsd le az autót azonnal, hagyd 1-2 percig járni.",
+  "Klíma: Havonta kapcsold be télen is, hogy a tömítések ne száradjanak ki.",
   "Tank: Ne várd meg, hogy teljesen kiürüljön, az üledék károsíthatja a motort.",
   "Akkumulátor: Hosszabb utak után jól feltöltödik a generátor.",
   "Éjszaka: Rágózás segít éberen tartani az agyat vezetéskor.",
   "Jégmentesítés: Ne forró vizet, csak meleg vagy ecetes oldatot használj.",
+  "Ismerd meg az autót: Mielőtt elindulsz, tanulmányozd az utastérben található gombokat.",
+  "Figyeld a forgalmat és a tükröket: Használd folyamatosan a visszapillantó tükröket",
+  "Ne engedd, hogy mások siettetése befolyásoljon: Ha valaki nyomást gyakorol rád, maradj a saját, biztonságos tempódban"
+
 ];
 
 export default function TipsAndTricksWidget() {
@@ -31,8 +35,8 @@ export default function TipsAndTricksWidget() {
   return (
     <div className="bg-[#3A4750] rounded-4xl p-6 flex flex-col items-start justify-between border border-white/5 shadow-lg hover:scale-[1.02] duration-300">
       <div className="flex items-start gap-3 mb-3">
-        <Lightbulb className="text-[#F6C90E] flex-shrink-0 mt-1" size={24} />
-        <p className="text-[16px] uppercase font-bold text-gray-400">
+        <Lightbulb className="text-[#F6C90E] flex-shrink-0 mt-1" size={12} />
+        <p className="text-[12px] uppercase font-bold text-gray-400">
           Tippek & Trükkök
         </p>
       </div>

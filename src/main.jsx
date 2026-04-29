@@ -44,7 +44,12 @@ const AdminInstructors = lazy(
 );
 const AdminReviews = lazy(() => import("./pages/admin/AdminReviews.jsx"));
 const AdminReports = lazy(() => import("./pages/admin/AdminReports.jsx"));
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.jsx"));
+const AdminSchools = lazy(() => import("./pages/admin/AdminSchools.jsx"));
+
+// School Admin Pages
+const SchoolDashboard = lazy(() => import("./pages/admin/SchoolDashboard.jsx"));
+import SchoolProtectedRoute from "./guards/SchoolProtectedRoute.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
@@ -102,10 +107,22 @@ createRoot(document.getElementById("root")).render(
             <Route path="/admin/instructors" element={<AdminInstructors />} />
             <Route path="/admin/reviews" element={<AdminReviews />} />
             <Route path="/admin/reports" element={<AdminReports />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/schools" element={<AdminSchools />} />
+          </Route>
+
+          {/* School Admin Routes (Protected) */}
+          <Route
+            path="/school-admin"
+            element={
+              <SchoolProtectedRoute>
+                <MainLayout />
+              </SchoolProtectedRoute>
+            }>
+            <Route index element={<SchoolDashboard />} />
           </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>
   </AuthProvider>,
 );
+

@@ -8,6 +8,7 @@ import {
   Settings,
   LogOut,
   Shield,
+  Building2,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 
@@ -64,11 +65,11 @@ const AdminLanding = () => {
       color: "bg-red-500",
     },
     {
-      icon: Settings,
-      label: "Beállítások",
-      description: "Platform konfigurációs beállítások",
-      path: "/admin/settings",
-      color: "bg-indigo-500",
+      icon: Building2,
+      label: "Iskolák",
+      description: "Autósiskolák regisztrálása és kezelése",
+      path: "/admin/schools",
+      color: "bg-orange-500",
     },
   ];
 

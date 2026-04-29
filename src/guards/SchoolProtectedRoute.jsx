@@ -3,28 +3,28 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 
 /**
- * AdminProtectedRoute - Protects admin-only pages
- * Only allows users with 'creator' or 'admin' role to access admin pages
+ * SchoolProtectedRoute - Protects school admin pages
+ * Only allows users with 'school' role to access
  */
-const AdminProtectedRoute = ({ children }) => {
+const SchoolProtectedRoute = ({ children }) => {
   const { user, isLoggedIn } = useAuth();
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user?.role !== "creator" && user?.role !== "admin") {
+  if (user?.role !== "school") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="text-center bg-white p-8 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold text-red-600 mb-2">
-            Access Denied
+            Hozzáférés Megtagadva
           </h1>
           <p className="text-gray-600">
-            You don't have permission to access this page.
+            Nincs jogosultságod ennek az oldalnak a megtekintéséhez.
           </p>
           <p className="text-sm text-gray-400 mt-4">
-            Only administrators can access the admin panel.
+            Csak az autósiskolák regisztrált adminisztrátorai férhetnek hozzá ehhez a felülethez.
           </p>
         </div>
       </div>
@@ -34,4 +34,4 @@ const AdminProtectedRoute = ({ children }) => {
   return children;
 };
 
-export default AdminProtectedRoute;
+export default SchoolProtectedRoute;

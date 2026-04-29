@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import LocationFinderWidget from "../widgets/LocationFinderWidget.jsx";
 import ReviewWidget from "../widgets/ReviewWidget.jsx";
 import OnlineStatusWidget from "../widgets/OnlineStatusWidget.jsx";
@@ -77,12 +78,22 @@ export default function DiscoveryGrid() {
     );
   };
 
-  // Sample data for Top Instructor
-  const topInstr = {
-    name: "Kovács Péter",
-    desc: "A hónap kiemelt oktatója kiváló értékelésekkel.",
-    color: "from-blue-500 to-purple-600",
-  };
+  // Top Instructor - dinamikus töltés
+  const [topInstr, setTopInstr] = useState({ name: "...", desc: "Betöltés..." });
+
+  useEffect(() => {
+    axios.get("http://localhost:3300/api/v1/instructor/top")
+      .then((res) => {
+        const d = res.data;
+        setTopInstr({
+          id: d._id,
+          name: d.name,
+          desc: `${d.city || ""} · ⭐ ${d.averageRating} (${d.reviewCount} értékelés)`,
+          profileImage: d.profileImage,
+        });
+      })
+      .catch(() => setTopInstr({ name: "Nincs adat", desc: "Értékelés szükséges" }));
+  }, []);
 
   return (
     <>

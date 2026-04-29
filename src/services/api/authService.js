@@ -7,24 +7,16 @@ import {
   getToken,
 } from "../storage/storageService.js";
 
-// ─── Axios instance ───────────────────────────────────────────────────────────
-
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:3300/api/v1",
-  withCredentials: true, // needed so the httpOnly refresh token cookie is sent automatically
+  withCredentials: true,
 });
-
-// ─── Attach access token to every request ────────────────────────────────────
 
 api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
-
-// ─── Auto-refresh when access token expires ───────────────────────────────────
-// If a request gets a 401 with { expired: true }, silently get a new access
-// token and retry the original request. If the refresh also fails, log out.
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -45,7 +37,6 @@ api.interceptors.response.use(
       !original._retry
     ) {
       if (isRefreshing) {
-        // Queue up requests that came in while refresh was in progress
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then((token) => {
@@ -67,7 +58,7 @@ api.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
         clearAll();
-        window.dispatchEvent(new Event("auth:logout")); // AuthContext listens to this
+        window.dispatchEvent(new Event("auth:logout"));
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -77,10 +68,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-// ─── register ─────────────────────────────────────────────────────────────────
-// Receives surname + lastname from Register.jsx, joins them into `name` for DB,
-// then saves the token and user that the backend sends back.
 
 export const register = async ({ surname, lastname, email, password }) => {
   const name = `${surname.trim()} ${lastname.trim()}`;
@@ -93,9 +80,6 @@ export const register = async ({ surname, lastname, email, password }) => {
   return res.data; // { accessToken, user: { id, name, email } }
 };
 
-// ─── login ────────────────────────────────────────────────────────────────────
-// Sends email + password, saves the token and user that comes back.
-
 export const login = async ({ email, password }) => {
   const res = await api.post("/auth/login", { email, password });
 
@@ -105,14 +89,10 @@ export const login = async ({ email, password }) => {
   return res.data; // { accessToken, user: { id, name, email } }
 };
 
-// ─── logout ───────────────────────────────────────────────────────────────────
-// Tells the backend to revoke the refresh token, then wipes local state.
-
 export const logout = async () => {
   try {
     await api.post("/auth/logout");
   } catch {
-    // Wipe local state regardless of whether the server responded
   } finally {
     clearAll();
   }

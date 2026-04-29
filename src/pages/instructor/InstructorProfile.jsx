@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
@@ -6,6 +6,7 @@ import {
   getStoredUser,
 } from "../../services/storage/storageService.js";
 import { useAuth } from "../../hooks/useAuth.js";
+import { Camera, Loader2 } from "lucide-react";
 
 export default function InstructorProfile() {
   const { id } = useParams();
@@ -20,6 +21,12 @@ export default function InstructorProfile() {
   const [sortBy, setSortBy] = useState("newest");
   const [nominationStatus, setNominationStatus] = useState(null);
   const [nominatingLoading, setNominatingLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Is this the instructor viewing their own profile?
+  const storedUser = getStoredUser();
+  const isOwnProfile = storedUser?.role === "instructor" && storedUser?.id === id;
 
   useEffect(() => {
     if (!id) {
@@ -103,10 +110,9 @@ export default function InstructorProfile() {
   };
 
   const handleHelpfulClick = async (reviewId) => {
-    const token = getToken();
-    const storedUser = getStoredUser();
-    const userId = storedUser?.id;
-    if (!token || !userId) return toast.warning("Jelentkezz be a kedveléshez!");
+    const storedUser2 = getStoredUser();
+    const userId = storedUser2?.id;
+    if (!userId) return toast.warning("Jelentkezz be a kedveléshez!");
 
     try {
       await api.put(`/review/${reviewId}/helpful`, { userId });
@@ -130,6 +136,36 @@ export default function InstructorProfile() {
     } catch (error) {
       toast.error("Nem sikerült elmenteni a kedvelést.", error);
     }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("A kép mérete maximum 2MB lehet!");
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Csak képfájlt tölthetsz fel!");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result;
+      setUploadingImage(true);
+      try {
+        const res = await api.post(`/instructor/${id}/profile-image`, {
+          profileImage: base64,
+        });
+        setInstructor((prev) => ({ ...prev, profileImage: res.data.profileImage }));
+        toast.success("Profilkép sikeresen feltöltve!");
+      } catch (err) {
+        toast.error(err.response?.data?.error || "Hiba a feltöltés közben.");
+      } finally {
+        setUploadingImage(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   if (loading) {
@@ -187,11 +223,48 @@ export default function InstructorProfile() {
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5 lg:col-span-4 flex flex-col">
-            <div className="w-full aspect-4/3 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden group/img">
-              <div className="w-full h-full bg-linear-to-br from-gray-700 to-gray-800 flex items-center justify-center text-gray-400">
-                <span className="text-sm">Profilkép</span>
+            {/* Profile image */}
+            <div className="relative w-full aspect-square max-w-[240px] mx-auto md:mx-0">
+              <div className="w-full h-full rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg bg-white/5">
+                {instructor.profileImage ? (
+                  <img
+                    src={instructor.profileImage}
+                    alt="Profilkép"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 gap-2">
+                    <Camera size={40} className="text-gray-600" />
+                    <span className="text-sm font-medium">Nincs profilkép</span>
+                  </div>
+                )}
               </div>
+              {isOwnProfile && (
+                <>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="absolute bottom-3 right-3 bg-[#F6C90E] hover:bg-yellow-400 text-black rounded-xl p-2.5 shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer disabled:opacity-60"
+                    title="Profilkép módosítása">
+                    {uploadingImage ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <Camera size={18} />
+                    )}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </>
+              )}
             </div>
+            {isOwnProfile && (
+              <p className="text-xs text-gray-500 mt-2 text-center md:text-left">Max. 2MB · JPG, PNG, WEBP</p>
+            )}
             <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-md">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                 Átlagos Értékelés

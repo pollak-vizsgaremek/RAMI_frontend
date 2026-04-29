@@ -42,6 +42,7 @@ export const getStoredUser = () => {
     const userName = sessionStorage.getItem("userName");
     const userEmail = sessionStorage.getItem("userEmail");
     const userRole = sessionStorage.getItem("userRole") || "student";
+    const userProfileImage = sessionStorage.getItem("userProfileImage") || null;
 
     // Only return if we have at least a userId
     if (userId) {
@@ -50,6 +51,7 @@ export const getStoredUser = () => {
         name: userName || userEmail || "User",
         email: userEmail || "",
         role: userRole,
+        profileImage: userProfileImage,
       };
     }
   } // <-- This closing brace was missing
@@ -66,4 +68,10 @@ export const clearStoredUser = () => {
 export const clearAll = () => {
   clearToken();
   clearStoredUser();
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("userId");
+  sessionStorage.removeItem("userName");
+  sessionStorage.removeItem("userEmail");
+  sessionStorage.removeItem("userRole");
+  sessionStorage.removeItem("userProfileImage");
 };

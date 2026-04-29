@@ -7,6 +7,9 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  ChevronRight,
+  RefreshCw,
+  Building2,
 } from "lucide-react";
 import { api } from "../../services/api/authService.js";
 import { toast } from "react-toastify";
@@ -174,13 +177,14 @@ const AdminDashboard = () => {
           <p className="text-xs text-gray-500 mt-2">Szűrés és moderálás</p>
         </a>
 
+
         <a
-          href="/admin/settings"
+          href="/admin/schools"
           className="p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border-2 border-transparent hover:border-[#F6C90E]">
-          <FileText className="text-orange-600 mb-3" size={32} />
-          <h3 className="font-semibold text-gray-900">Beállítások</h3>
+          <Building2 className="text-orange-600 mb-3" size={32} />
+          <h3 className="font-semibold text-gray-900">Iskolák</h3>
           <p className="text-xs text-gray-500 mt-2">
-            Rendszer beállítások
+            Autósiskolák kezelése
           </p>
         </a>
         <a

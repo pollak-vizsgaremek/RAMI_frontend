@@ -111,8 +111,8 @@ const MyReviews = () => {
                         : review.instructor?.name || "Ismeretlen oktató"}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <Clock size={14} className="text-gray-500" />
-                      <span className="text-xs text-gray-500">
+                      <Clock size={14} className="text-gray-400" />
+                      <span className="text-xs text-gray-300 font-medium">
                         {new Date(review.createdAt).toLocaleDateString("hu-HU", {
                           year: "numeric",
                           month: "long",
@@ -135,7 +135,7 @@ const MyReviews = () => {
 
                 {/* Detail scores */}
                 {d.turelem && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-gray-500 uppercase font-bold bg-white/5 p-4 rounded-xl">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-gray-300 uppercase font-bold bg-white/5 p-4 rounded-xl">
                     <div className="flex flex-col gap-1">
                       <span>Türelem</span>
                       <span className="text-white text-base">{d.turelem}</span>

@@ -15,6 +15,7 @@ import {
   getToken,
   getStoredUser,
 } from "../../services/storage/storageService.js";
+import { api } from "../../services/api/authService.js";
 
 const Navbar = ({
   onLoginClick,
@@ -30,6 +31,7 @@ const Navbar = ({
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [userName, setUserName] = useState("Felhasználó");
   const [userRole, setUserRole] = useState(null);
+  const [userProfileImage, setUserProfileImage] = useState(null);
 
   const menuRef = useRef(null);
   const searchRef = useRef(null);
@@ -43,6 +45,33 @@ const Navbar = ({
     setUserRole(user?.role);
     if (token && user) {
       setUserName(user.name || user.email || "Felhasználó");
+      
+      if (user.profileImage) {
+        setUserProfileImage(user.profileImage);
+      } else {
+        // Fetch it from the backend if it's missing (for old sessions)
+        const endpoint = user.role === "instructor" ? `/instructor/${user.id || user.instructorId}` : `/user/${user.id}`;
+        if (user.id || user.instructorId) {
+          api.get(endpoint).then(res => {
+            if (res.data?.profileImage) {
+               setUserProfileImage(res.data.profileImage);
+               // Update storage so we don't fetch again next time
+               const updatedUser = { ...user, profileImage: res.data.profileImage };
+               localStorage.setItem("user", JSON.stringify(updatedUser));
+               sessionStorage.setItem("userProfileImage", res.data.profileImage);
+            } else {
+               setUserProfileImage(null);
+            }
+          }).catch(err => {
+             console.error("Failed to fetch profile image for navbar:", err);
+             setUserProfileImage(null);
+          });
+        } else {
+          setUserProfileImage(null);
+        }
+      }
+    } else {
+      setUserProfileImage(null);
     }
   };
 
@@ -148,13 +177,26 @@ const Navbar = ({
                         <div
                           key={instructor._id}
                           onClick={() => handleInstructorClick(instructor._id)}
-                          className="p-3 hover:bg-[#F6C90E]/10 cursor-pointer border-b border-gray-50 last:border-0 transition-colors">
-                          <div className="font-bold text-gray-900">
-                            {instructor.name}
-                          </div>
-                          <div className="flex items-center text-xs text-gray-500 mt-1">
-                            <MapPin size={12} className="mr-1 text-gray-400" />
-                            {schoolName}
+                          className="p-3 hover:bg-[#F6C90E]/10 cursor-pointer border-b border-gray-50 last:border-0 transition-colors flex items-center gap-3">
+                          
+                          {instructor.profileImage ? (
+                            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+                              <img src={instructor.profileImage} alt={instructor.name} className="w-full h-full object-cover" />
+                            </div>
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 border border-gray-200">
+                              <User size={16} className="text-gray-400" />
+                            </div>
+                          )}
+
+                          <div className="flex-1 min-w-0">
+                            <div className="font-bold text-gray-900 truncate">
+                              {instructor.name}
+                            </div>
+                            <div className="flex items-center text-xs text-gray-500 mt-0.5 truncate">
+                              <MapPin size={12} className="mr-1 text-gray-400 flex-shrink-0" />
+                              <span className="truncate">{schoolName}</span>
+                            </div>
                           </div>
                         </div>
                       );
@@ -192,8 +234,12 @@ const Navbar = ({
                   <span className="font-medium text-sm hidden sm:block pl-2">
                     {userName}
                   </span>
-                  <div className="bg-[#303841] p-2 rounded-full border border-gray-600 flex items-center justify-center">
-                    <User size={20} />
+                  <div className="bg-[#303841] p-2 rounded-full border border-gray-600 flex items-center justify-center overflow-hidden w-10 h-10">
+                    {userProfileImage ? (
+                      <img src={userProfileImage} alt="Profil" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <User size={20} />
+                    )}
                   </div>
                 </button>
 
@@ -203,7 +249,14 @@ const Navbar = ({
                       to="/user-profile"
                       className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
                       onClick={() => setIsMenuOpen(false)}>
-                      <User size={18} className="mr-3 text-gray-400" /> Profil
+                      {userProfileImage ? (
+                        <div className="w-5 h-5 rounded-full overflow-hidden mr-3 border border-gray-200 shadow-sm flex-shrink-0">
+                          <img src={userProfileImage} alt="Profil" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <User size={18} className="mr-3 text-gray-400" />
+                      )}
+                      Profil
                     </Link>
                     {userRole === "instructor" ? (
                       <Link
@@ -227,7 +280,7 @@ const Navbar = ({
                       <Star size={18} className="mr-3 text-gray-400" />{" "}
                       Értékeléseim
                     </Link>
-                    {userRole === "creator" && (
+                    {(userRole === "creator" || userRole === "admin") && (
                       <>
                         <div className="h-px bg-gray-100 my-1"></div>
                         <Link
@@ -235,6 +288,17 @@ const Navbar = ({
                           className="flex items-center w-full px-4 py-3 text-sm font-semibold text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
                           onClick={() => setIsMenuOpen(false)}>
                           <Settings size={18} className="mr-3" /> Admin Panel
+                        </Link>
+                      </>
+                    )}
+                    {userRole === "school" && (
+                      <>
+                        <div className="h-px bg-gray-100 my-1"></div>
+                        <Link
+                          to="/school-admin"
+                          className="flex items-center w-full px-4 py-3 text-sm font-semibold text-yellow-600 hover:bg-yellow-50 transition-colors cursor-pointer"
+                          onClick={() => setIsMenuOpen(false)}>
+                          <Settings size={18} className="mr-3" /> Iskolám Kezelése
                         </Link>
                       </>
                     )}
