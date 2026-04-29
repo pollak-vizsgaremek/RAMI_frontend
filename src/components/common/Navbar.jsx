@@ -200,7 +200,7 @@ const Navbar = ({
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-2xl overflow-hidden py-2 border border-gray-100">
                     <Link
-                      to="/profile"
+                      to="/user-profile"
                       className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
                       onClick={() => setIsMenuOpen(false)}>
                       <User size={18} className="mr-3 text-gray-400" /> Profil
@@ -214,10 +214,11 @@ const Navbar = ({
                         Tanulóim
                       </Link>
                     ) : (
-                      <button className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer">
+                      <Link to="/my-instructors" className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-[#F6C90E]/10 hover:text-[#D4AC0D] transition-colors cursor-pointer"
+                        onClick={() => setIsMenuOpen(false)}>
                         <Users size={18} className="mr-3 text-gray-400" />{" "}
                         Oktatóim
-                      </button>
+                      </Link>
                     )}
                     <Link
                       to="/my-reviews"

@@ -296,9 +296,6 @@ export default function InstructorProfile() {
                 {nominatingLoading ? "Jelölés..." : "Jelölés oktatómnak"}
               </button>
             )}
-            <button className="whitespace-nowrap w-full md:w-auto bg-[#F6C90E] text-black px-8 py-4 rounded-2xl font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-all text-sm cursor-pointer shadow-lg shadow-[#F6C90E]/20 hover:shadow-[#F6C90E]/40">
-              Kapcsolat
-            </button>
           </div>
         </div>
 
