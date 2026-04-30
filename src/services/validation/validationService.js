@@ -1,10 +1,6 @@
-// services/validationService.js
-// Validates the exact fields used in Login.jsx and Register.jsx.
-// Every function returns an error string or null.
-// validateLoginForm / validateRegisterForm return a { field: errorString } object.
-// isValid() returns true when that object is empty (no errors).
 
-// ─── Field validators ─────────────────────────────────────────────────────────
+
+
 
 const validateEmail = (email) => {
   if (!email || email.trim() === "") return "Az e-mail cím megadása kötelező.";
@@ -25,7 +21,8 @@ const validateName = (value, label) => {
   return null;
 };
 
-// ─── Form validators ──────────────────────────────────────────────────────────
+
+
 
 // Used by Login.jsx
 // Checks: email, password
@@ -66,8 +63,7 @@ export const validateRegisterForm = ({ surname, lastname, email, password, passw
   return errors;
 };
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
 
-// Returns true when there are zero errors — used in both components like:
-// if (!isValid(formErrors)) { setErrors(formErrors); return; }
+
+
 export const isValid = (errors) => Object.keys(errors).length === 0;

@@ -14,6 +14,9 @@ export default function UserProfile() {
   const [isVisible, setIsVisible] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ email: "", phoneNumber: "" });
+  const [saving, setSaving] = useState(false);
   const fileInputRef = useRef(null);
 
   const [myReviews, setMyReviews] = useState([]);
@@ -29,34 +32,46 @@ export default function UserProfile() {
 
     const user = getStoredUser();
     const name = user?.name || "Ismeretlen Felhasználó";
-    const email = user?.email || "Nincs e-mail megadva";
-    const phone = user?.phone || "Nincs megadva";
+    const email = user?.email || "";
+    const phone = user?.phoneNumber || user?.phone || "";
     const role = user?.role || "student";
     const instructorId = user?.instructorId;
     setUserData({ name, email, phone, id: user?.id, role, instructorId });
+    setEditForm({ email, phoneNumber: phone });
 
     // Load existing profile image
     if (user?.id) {
       if (user.profileImage) {
         setProfileImage(user.profileImage);
       }
-      
-      const endpoint = role === "instructor" 
-        ? `/instructor/${instructorId || user.id}` 
+
+      const endpoint = role === "instructor"
+        ? `/instructor/${instructorId || user.id}`
         : `/user/${user.id}`;
-        
+
       api.get(endpoint).then((res) => {
-        if (res.data?.profileImage) {
-          setProfileImage(res.data.profileImage);
+        if (res.data) {
+          if (res.data.profileImage) {
+            setProfileImage(res.data.profileImage);
+          }
+
+          const email = res.data.email || "";
+          const phone = res.data.phoneNumber || "";
+
+          setUserData(prev => ({ ...prev, email, phone }));
+          setEditForm({ email, phoneNumber: phone });
+
           // Also sync with storage just in case
           const storedUser = getStoredUser();
           if (storedUser) {
-             storedUser.profileImage = res.data.profileImage;
-             localStorage.setItem("user", JSON.stringify(storedUser));
-             sessionStorage.setItem("userProfileImage", res.data.profileImage);
+            if (res.data.profileImage) storedUser.profileImage = res.data.profileImage;
+            storedUser.email = email;
+            storedUser.phoneNumber = phone;
+            localStorage.setItem("user", JSON.stringify(storedUser));
+            if (res.data.profileImage) sessionStorage.setItem("userProfileImage", res.data.profileImage);
           }
         }
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     const fetchMyReviews = async () => {
@@ -98,21 +113,21 @@ export default function UserProfile() {
         const storedUser = getStoredUser();
         const isInstructor = storedUser?.role === "instructor";
         const instructorId = storedUser?.instructorId || userData.instructorId || userData.id;
-        const endpoint = isInstructor 
-          ? `/instructor/${instructorId}/profile-image` 
+        const endpoint = isInstructor
+          ? `/instructor/${instructorId}/profile-image`
           : `/user/${userData.id}/profile-image`;
-          
+
         const res = await api.post(endpoint, {
           profileImage: base64,
         });
         setProfileImage(res.data.profileImage);
-        
+
         // Update local storage so Navbar sees it
         storedUser.profileImage = res.data.profileImage;
         localStorage.setItem("user", JSON.stringify(storedUser));
         sessionStorage.setItem("userProfileImage", res.data.profileImage);
         window.dispatchEvent(new Event("authChange"));
-        
+
         toast.success("Profilkép sikeresen feltöltve!");
       } catch (err) {
         toast.error(err.response?.data?.error || "Hiba a feltöltés közben.");
@@ -134,6 +149,42 @@ export default function UserProfile() {
     } catch (error) {
       console.error("Hiba törléskor:", error);
       toast.error("Nem sikerült törölni az értékelést.");
+    }
+  };
+
+  const handleSaveContact = async () => {
+    setSaving(true);
+    try {
+      const storedUser = getStoredUser();
+      const isInstructor = storedUser?.role === "instructor";
+      const instructorId = storedUser?.instructorId || userData.instructorId || userData.id;
+      const endpoint = isInstructor
+        ? `/instructor/${instructorId}`
+        : `/user/${userData.id}`;
+
+      const res = await api.put(endpoint, {
+        email: editForm.email,
+        phoneNumber: editForm.phoneNumber.trim() === "" ? null : editForm.phoneNumber.trim()
+      });
+
+      setUserData(prev => ({
+        ...prev,
+        email: res.data.email,
+        phone: res.data.phoneNumber
+      }));
+
+      // Update local storage
+      storedUser.email = res.data.email;
+      storedUser.phoneNumber = res.data.phoneNumber;
+      localStorage.setItem("user", JSON.stringify(storedUser));
+      window.dispatchEvent(new Event("authChange"));
+
+      setIsEditing(false);
+      toast.success("Elérhetőségek sikeresen frissítve!");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Hiba a mentés során.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -201,31 +252,86 @@ export default function UserProfile() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-end gap-8">
-          <div className="w-full flex flex-col gap-5">
-            <h3 className="text-xl font-bold text-white px-1">Elérhetőségek</h3>
-            <div className="flex flex-col sm:flex-row gap-6 bg-white/5 p-5 rounded-2xl border border-white/5">
-              <div className="flex-1">
-                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-                  E-mail
-                </h4>
-                <a
-                  href={`mailto:${userData.email}`}
-                  className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md">
-                  {userData.email}
-                </a>
+        <div className="relative z-10 mt-12 pt-8 border-t border-white/10 flex flex-col gap-5">
+          <div className="flex justify-between items-center px-1">
+            <h3 className="text-xl font-bold text-white">Elérhetőségek</h3>
+            {!isEditing ? (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-xs font-bold text-[#F6C90E] hover:text-yellow-400 uppercase tracking-widest transition-colors cursor-pointer">
+                Módosítás
+              </button>
+            ) : (
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditForm({ email: userData.email, phoneNumber: userData.phone });
+                  }}
+                  className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-widest transition-colors cursor-pointer">
+                  Mégse
+                </button>
+                <button
+                  onClick={handleSaveContact}
+                  disabled={saving}
+                  className="text-xs font-bold text-[#F6C90E] hover:text-yellow-400 uppercase tracking-widest transition-colors cursor-pointer disabled:opacity-50">
+                  {saving ? "Mentés..." : "Mentés"}
+                </button>
               </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-                  Telefon
-                </h4>
-                <a
-                  href={userData.phone !== "Nincs megadva" ? `tel:${userData.phone}` : "#"}
-                  className={`font-medium text-lg transition-colors ${userData.phone !== "Nincs megadva" ? "text-white hover:text-[#F6C90E]" : "text-gray-500 cursor-default"}`}>
-                  {userData.phone}
-                </a>
+            )}
+          </div>
+          <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+            {!isEditing ? (
+              <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                    E-mail
+                  </h4>
+                  <a
+                    href={`mailto:${userData.email}`}
+                    className="font-medium text-[#F6C90E] hover:underline text-lg transition-all break-all drop-shadow-md">
+                    {userData.email || "Nincs megadva"}
+                  </a>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                    Telefon
+                  </h4>
+                  <a
+                    href={userData.phone ? `tel:${userData.phone}` : "#"}
+                    className={`font-medium text-lg transition-colors ${userData.phone ? "text-white hover:text-[#F6C90E]" : "text-gray-500 cursor-default"}`}>
+                    {userData.phone || "Nincs megadva"}
+                  </a>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                    E-mail
+                  </h4>
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#F6C90E] transition-colors"
+                    placeholder="E-mail cím"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                    Telefon
+                  </h4>
+                  <input
+                    type="text"
+                    value={editForm.phoneNumber}
+                    onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#F6C90E] transition-colors"
+                    placeholder="Telefonszám (pl. +36201234567)"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

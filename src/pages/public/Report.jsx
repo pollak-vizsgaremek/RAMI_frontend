@@ -69,7 +69,7 @@ export default function Report() {
       console.error("Hiba a hibajelentés beküldésekor:", error);
       toast.error(
         error.response?.data?.error ||
-          "Hiba történt a hibajelentés beküldésekor.",
+        "Hiba történt a hibajelentés beküldésekor.",
       );
     } finally {
       setIsSubmitting(false);

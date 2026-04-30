@@ -153,45 +153,41 @@ export default function Login({ onClose, onSwitchToRegister }) {
         onClick={onClose}
       />
       <div
-        className={`relative w-full max-w-110 ${
-          loginMode === "admin"
+        className={`relative w-full max-w-110 ${loginMode === "admin"
             ? "bg-linear-to-br from-slate-900 to-slate-800"
             : loginMode === "instructor"
               ? "bg-linear-to-br from-[#1a2332] to-[#2a3a4a]"
               : "bg-white"
-        } rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"}`}>
+          } rounded-[40px] p-8 shadow-2xl transition-all duration-500 ease-out transform ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95"}`}>
 
         {/* Mode Toggle — 3 tabs */}
         <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-full">
           <button
             type="button"
             onClick={() => setLoginMode("user")}
-            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all text-sm ${
-              loginMode === "user"
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all text-sm ${loginMode === "user"
                 ? "bg-white text-black shadow-md"
                 : "text-gray-600 hover:text-gray-800"
-            }`}>
+              }`}>
             Felhasználó
           </button>
           <button
             type="button"
             onClick={() => setLoginMode("instructor")}
-            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${
-              loginMode === "instructor"
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${loginMode === "instructor"
                 ? "bg-blue-500 text-white shadow-md"
                 : "text-gray-600 hover:text-gray-800"
-            }`}>
+              }`}>
             <BookOpen size={14} />
             Oktató
           </button>
           <button
             type="button"
             onClick={() => setLoginMode("admin")}
-            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${
-              loginMode === "admin"
+            className={`flex-1 py-2 px-3 rounded-full font-semibold transition-all flex items-center justify-center gap-1.5 text-sm ${loginMode === "admin"
                 ? "bg-[#F6C90E] text-black shadow-md"
                 : "text-gray-600 hover:text-gray-800"
-            }`}>
+              }`}>
             <Shield size={14} />
             Admin
           </button>
@@ -225,11 +221,10 @@ export default function Login({ onClose, onSwitchToRegister }) {
             </label>
             <input
               type="email"
-              className={`w-full border ${
-                isDark
+              className={`w-full border ${isDark
                   ? "border-gray-600 bg-gray-800 text-white focus:ring-2 focus:ring-[#F6C90E]/50 focus:border-[#F6C90E]"
                   : "border-gray-200 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500"
-              } rounded-xl px-4 py-3.5 outline-none transition-all`}
+                } rounded-xl px-4 py-3.5 outline-none transition-all`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -243,22 +238,20 @@ export default function Login({ onClose, onSwitchToRegister }) {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className={`w-full border ${
-                  isDark
+                className={`w-full border ${isDark
                     ? "border-gray-600 bg-gray-800 text-white focus:ring-2 focus:ring-[#F6C90E]/50 focus:border-[#F6C90E]"
                     : "border-gray-200 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500"
-                } rounded-xl px-4 py-3.5 outline-none transition-all`}
+                  } rounded-xl px-4 py-3.5 outline-none transition-all`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${
-                  isDark
+                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${isDark
                     ? "text-gray-500 hover:text-[#F6C90E]"
                     : "text-gray-400 hover:text-yellow-600"
-                }`}>
+                  }`}>
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
@@ -267,8 +260,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
           <button
             type="submit"
             disabled={!isFormValid || loading}
-            className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 cursor-pointer ${
-              loginMode === "admin"
+            className={`w-full rounded-xl py-4 font-bold transition-all transform active:scale-95 cursor-pointer ${loginMode === "admin"
                 ? isFormValid && !loading
                   ? "bg-[#F6C90E] text-black hover:bg-yellow-500 shadow-lg shadow-yellow-500/50"
                   : "bg-gray-600 text-gray-400 cursor-not-allowed"
@@ -279,7 +271,7 @@ export default function Login({ onClose, onSwitchToRegister }) {
                   : isFormValid && !loading
                     ? "bg-black text-white hover:bg-gray-800 shadow-lg"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}>
+              }`}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

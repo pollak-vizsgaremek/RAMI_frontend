@@ -164,19 +164,19 @@ export default function RegisterInstructor({ onClose }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-300 mb-1">Iskola *</label>
-                  <select value={selectedSchool} onChange={(e) => setSelectedSchool(e.target.value)} required className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600">
-                    <option value="">-- Válassz iskolát --</option>
-                    {schools.length === 0 && <option disabled>Betöltés...</option>}
-                    {schools.map((s, i) => {
-                      const id = s && typeof s === 'object' ? (s.id || s._id || s.value || s.key) : s;
-                      const label = s && typeof s === 'object' ? (s.name || s.label || String(s)) : s;
-                      return (
-                        <option key={i} value={id}>
-                          {label}
-                        </option>
-                      );
-                    })}
-                  </select>
+                <select value={selectedSchool} onChange={(e) => setSelectedSchool(e.target.value)} required className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600">
+                  <option value="">-- Válassz iskolát --</option>
+                  {schools.length === 0 && <option disabled>Betöltés...</option>}
+                  {schools.map((s, i) => {
+                    const id = s && typeof s === 'object' ? (s.id || s._id || s.value || s.key) : s;
+                    const label = s && typeof s === 'object' ? (s.name || s.label || String(s)) : s;
+                    return (
+                      <option key={i} value={id}>
+                        {label}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
 
               <div>

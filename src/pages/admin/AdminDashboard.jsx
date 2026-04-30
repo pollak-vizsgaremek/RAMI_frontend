@@ -36,7 +36,7 @@ const AdminDashboard = () => {
         }
       } catch (error) {
         console.error("Dashboard fetch error:", error);
-        // Ha 403-at kapunk, próbáljuk közvetlenül lekérni az adatokat
+        
         try {
           const [usersRes, instructorsRes] = await Promise.all([
             api.get(`/admin/users`),
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Irányítópult</h1>
         <p className="text-gray-500 mt-2">
@@ -125,7 +125,7 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      {/* Stats Grid */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {statCards.map((card, idx) => {
           const Icon = card.icon;
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* Quick Actions */}
+      
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <a
           href="/admin/users"
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
         </a>
       </div>
 
-      {/* Pending alerts */}
+      
       {stats.pendingInstructors > 0 && (
         <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">

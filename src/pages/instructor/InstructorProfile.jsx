@@ -24,7 +24,7 @@ export default function InstructorProfile() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Is this the instructor viewing their own profile?
+  
   const storedUser = getStoredUser();
   const isOwnProfile = storedUser?.role === "instructor" && storedUser?.id === id;
 
@@ -223,7 +223,7 @@ export default function InstructorProfile() {
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5 lg:col-span-4 flex flex-col">
-            {/* Profile image */}
+            
             <div className="relative w-full aspect-square max-w-[240px] mx-auto md:mx-0">
               <div className="w-full h-full rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg bg-white/5">
                 {instructor.profileImage ? (

@@ -97,7 +97,7 @@ const AdminUsers = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Bento */}
+      
       <div className="bg-white rounded-[32px] p-8 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
@@ -111,7 +111,7 @@ const AdminUsers = () => {
           </div>
         </div>
 
-        {/* Filters */}
+        
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <div className="relative flex-1 sm:w-64">
             <Search
@@ -138,7 +138,7 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {/* Users Table Bento */}
+      
       <div className="bg-white rounded-[32px] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -250,7 +250,7 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      
       {showModal && selectedUser && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-[32px] shadow-2xl max-w-md w-full p-8 transform transition-all">
